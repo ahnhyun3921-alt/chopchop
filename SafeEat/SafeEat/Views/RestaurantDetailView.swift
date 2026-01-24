@@ -11,6 +11,7 @@ struct RestaurantDetailView: View {
     let restaurant: Restaurant?
     @StateObject private var viewModel: RestaurantDetailViewModel
     @EnvironmentObject var favoritesViewModel: FavoritesViewModel
+    @Environment(\.dismiss) var dismiss
 
     init(restaurant: Restaurant? = nil) {
         self.restaurant = restaurant
@@ -25,6 +26,9 @@ struct RestaurantDetailView: View {
                 category: viewModel.restaurant.category,
                 isFavorite: favoritesViewModel.isFavorite(restaurantId: viewModel.restaurant.id),
                 phoneNumber: viewModel.restaurant.phoneNumber,
+                onBackTap: {
+                    dismiss()
+                },
                 onFavoriteToggle: {
                     favoritesViewModel.toggleFavorite(restaurant: viewModel.restaurant)
                 }
@@ -75,12 +79,13 @@ struct NavigationBar: View {
     let category: String
     let isFavorite: Bool
     let phoneNumber: String?
+    let onBackTap: () -> Void
     let onFavoriteToggle: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
             // 뒤로가기
-            Button(action: {}) {
+            Button(action: onBackTap) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.safeEatPrimary)

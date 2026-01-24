@@ -11,6 +11,7 @@ import CoreLocation
 struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
+    @EnvironmentObject var favoritesViewModel: FavoritesViewModel
     @State private var searchText = ""
 
     // 드래그 가능한 리스트 높이
@@ -169,7 +170,10 @@ struct RestaurantSearchView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 ForEach(viewModel.restaurants) { restaurant in
-                                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                                    NavigationLink(destination:
+                                        RestaurantDetailView(restaurant: restaurant)
+                                            .environmentObject(favoritesViewModel)
+                                    ) {
                                         RestaurantSearchCard(restaurant: restaurant)
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -390,6 +394,7 @@ struct RestaurantSearchView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             RestaurantSearchView()
+                .environmentObject(FavoritesViewModel())
         }
     }
 }
