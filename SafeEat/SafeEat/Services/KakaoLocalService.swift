@@ -180,7 +180,7 @@ struct KakaoPlace: Codable, Identifiable {
             id: id,
             name: placeName,
             category: mainCategory,
-            rating: 4.0,  // 카카오 API는 평점 제공 안 함 (기본값 4.0)
+            rating: 0.0,  // 평점 표시 안 함 (카카오 API 미제공)
             distance: formattedDistance,
             address: roadAddressName.isEmpty ? addressName : roadAddressName,
             operatingStatus: "영업시간 정보 없음",  // 카카오 기본 API는 영업시간 제공 안 함

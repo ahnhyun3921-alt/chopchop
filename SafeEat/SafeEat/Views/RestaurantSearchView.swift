@@ -256,22 +256,10 @@ struct RestaurantSearchCard: View {
                     .font(.system(size: 12))
                     .foregroundColor(.safeEatTextSecondary)
 
-                HStack(spacing: 4) {
-                    Image(systemName: "star.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(.safeEatPrimary)
-                    Text(String(format: "%.1f", restaurant.rating))
+                if !restaurant.distance.isEmpty {
+                    Text(restaurant.distance)
                         .font(.system(size: 12))
-                        .foregroundColor(.safeEatTextPrimary)
-
-                    if !restaurant.distance.isEmpty {
-                        Text("•")
-                            .font(.system(size: 10))
-                            .foregroundColor(.safeEatTextSecondary)
-                        Text(restaurant.distance)
-                            .font(.system(size: 12))
-                            .foregroundColor(.safeEatTextSecondary)
-                    }
+                        .foregroundColor(.safeEatTextSecondary)
                 }
 
                 Text(restaurant.address)

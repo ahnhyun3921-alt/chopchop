@@ -38,7 +38,6 @@ struct RestaurantDetailView: View {
                     // 위치 정보 - 흰색 배경으로 완전 분리
                     VStack(spacing: 0) {
                         LocationSection(
-                            rating: viewModel.restaurant.rating,
                             distance: viewModel.restaurant.distance
                         )
                         .padding(.horizontal, 20)
@@ -191,7 +190,6 @@ struct ImageGallery: View {
 
 // MARK: - Location Section
 struct LocationSection: View {
-    let rating: Double
     let distance: String
 
     var body: some View {
@@ -200,17 +198,6 @@ struct LocationSection: View {
             Image(systemName: "location.fill")
                 .font(.system(size: 18))
                 .foregroundColor(.safeEatTextSecondary)
-
-            // 평점 뱃지
-            HStack(spacing: 4) {
-                Text("\(Int(rating))")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(Color.safeEatPrimary)
-            .cornerRadius(12)
 
             // 거리
             Text(distance)
