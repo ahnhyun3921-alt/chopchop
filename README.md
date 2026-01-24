@@ -35,16 +35,24 @@ CHOPCHOP 앱 스타일을 참고한 따뜻한 디자인:
 ```
 SafeEat/
 ├── SafeEat/
-│   ├── SafeEatApp.swift          # 앱 진입점
+│   ├── SafeEatApp.swift          # 앱 진입점 + Firebase 초기화
+│   ├── GoogleService-Info.plist  # Firebase 설정 파일
 │   ├── Views/
-│   │   └── RestaurantDetailView.swift  # 식당 조회 페이지
+│   │   ├── RestaurantDetailView.swift  # 식당 조회 페이지
+│   │   ├── LoginView.swift             # 로그인 화면
+│   │   └── SignInWithAppleButton.swift # Apple 로그인 버튼
 │   ├── Models/
 │   │   └── Restaurant.swift       # 데이터 모델
 │   ├── ViewModels/
 │   │   └── RestaurantDetailViewModel.swift
+│   ├── Services/
+│   │   ├── AuthenticationService.swift # Apple 로그인 처리
+│   │   └── FirestoreService.swift      # Firestore 데이터베이스 서비스
 │   └── Utils/
 │       └── ColorExtension.swift   # 색상 시스템
-└── SafeEat.xcodeproj/
+├── SafeEat.xcodeproj/
+├── FIREBASE_SETUP.md             # Firebase 설정 가이드
+└── ADD_FILES_TO_XCODE.md         # 파일 추가 가이드
 ```
 
 ## 현재 구현 상태
@@ -58,21 +66,53 @@ SafeEat/
   - 안전한 메뉴 리스트 펼침 상태
 - [x] 데이터 모델 (Restaurant, Menu, Person)
 - [x] ViewModel 구조
+- [x] 즐겨찾기 기능 (하트 토글 + Firebase 저장)
+- [x] **Firebase 통합 (코드 작성 완료)**
+  - Firebase 초기화 코드
+  - Apple Sign In 인증 서비스
+  - Firestore 데이터베이스 서비스
+  - 즐겨찾기 Firebase 저장
+  - 인물(제한 식품) 관리 서비스
+  - 로그인 UI 구현
 
-### 🚧 진행 예정
-- [ ] Firebase 연동
+### ⚙️ 설정 필요
+- [ ] Firebase iOS SDK 설치 (SPM - Xcode에서 수동 추가 필요)
+- [ ] Firebase 프로젝트 생성 및 GoogleService-Info.plist 교체
+- [ ] Apple Sign In Capability 추가
+- [ ] Firestore 데이터베이스 생성
+
+**설정 가이드**: `FIREBASE_SETUP.md` 참조
+
+### 🚧 다음 단계
 - [ ] 네이버 지도 API 연동
 - [ ] Claude API 연동
-- [ ] Apple Login 구현
 - [ ] 식당 검색 기능
 - [ ] 재료 관리 화면
 - [ ] 인물 관리 화면
 
 ## 실행 방법
 
+### 최초 설정
+
+1. **Firebase 설정** (필수)
+   - `FIREBASE_SETUP.md` 가이드를 따라 Firebase 프로젝트 설정
+   - Firebase iOS SDK를 Xcode에 추가
+   - GoogleService-Info.plist 교체
+
+2. **새 파일 추가** (필수)
+   - `ADD_FILES_TO_XCODE.md` 가이드를 따라 새로 생성된 파일들을 Xcode 프로젝트에 추가
+
+### 앱 실행
+
 1. Xcode에서 `SafeEat.xcodeproj` 열기
 2. iOS 시뮬레이터 또는 실제 기기 선택
-3. Command + R로 빌드 및 실행
+3. Command + B로 빌드 확인
+4. Command + R로 실행
+
+### 문제 해결
+
+- 빌드 에러 발생 시: Firebase SDK가 올바르게 추가되었는지 확인
+- 런타임 에러 발생 시: GoogleService-Info.plist가 프로젝트에 포함되어 있는지 확인
 
 ## 화면 설명
 

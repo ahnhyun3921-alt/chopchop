@@ -6,9 +6,15 @@
 //
 
 import SwiftUI
+import FirebaseCore
 
 @main
 struct SafeEatApp: App {
+    // Firebase 초기화
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             RestaurantDetailView()

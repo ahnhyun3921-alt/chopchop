@@ -31,17 +31,46 @@ class RestaurantDetailViewModel: ObservableObject {
     // 하트 토글
     func toggleFavorite() {
         isFavorite.toggle()
-        Self.saveFavoriteStatus(restaurantId: restaurant.id, isFavorite: isFavorite)
+
+        // Firebase에 즐겨찾기 저장 (비동기)
+        Task {
+            do {
+                // TODO: 실제 userId를 AuthenticationService에서 가져와야 함
+                let userId = "temp_user_id"
+
+                if isFavorite {
+                    try await FirestoreService.shared.addFavorite(userId: userId, restaurantId: restaurant.id)
+                } else {
+                    try await FirestoreService.shared.removeFavorite(userId: userId, restaurantId: restaurant.id)
+                }
+            } catch {
+                print("즐겨찾기 저장 실패: \(error.localizedDescription)")
+                // 에러 발생 시 상태 되돌리기
+                isFavorite.toggle()
+            }
+        }
     }
 
-    // UserDefaults에서 즐겨찾기 상태 불러오기
+    // Firebase에서 즐겨찾기 상태 불러오기
     private static func loadFavoriteStatus(restaurantId: String) -> Bool {
+        // 임시로 UserDefaults 사용 (Firebase 로그인 전)
+        // TODO: Firebase에서 불러오도록 수정
         return UserDefaults.standard.bool(forKey: "favorite_\(restaurantId)")
     }
 
-    // UserDefaults에 즐겨찾기 상태 저장
-    private static func saveFavoriteStatus(restaurantId: String, isFavorite: Bool) {
-        UserDefaults.standard.set(isFavorite, forKey: "favorite_\(restaurantId)")
+    // 즐겨찾기 상태 동기화 (Firebase에서)
+    func loadFavoriteFromFirebase() async {
+        do {
+            // TODO: 실제 userId를 AuthenticationService에서 가져와야 함
+            let userId = "temp_user_id"
+            let isFav = try await FirestoreService.shared.isFavorite(userId: userId, restaurantId: restaurant.id)
+
+            await MainActor.run {
+                self.isFavorite = isFav
+            }
+        } catch {
+            print("즐겨찾기 로드 실패: \(error.localizedDescription)")
+        }
     }
 
     func toggleOperatingHours() {
