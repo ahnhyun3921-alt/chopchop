@@ -6,190 +6,132 @@
 //
 
 import SwiftUI
+import MapKit
 import CoreLocation
-// KakaoMapsSDK는 SPM 설치 후 활성화
-// import KakaoMapsSDK
 
-/// 카카오 지도를 SwiftUI에서 사용하기 위한 Representable
+/// 지도를 SwiftUI에서 사용하기 위한 Representable (Apple MapKit 사용)
 struct KakaoMapView: UIViewRepresentable {
     @Binding var restaurants: [Restaurant]
     @Binding var selectedRestaurant: Restaurant?
     var currentLocation: CLLocationCoordinate2D?
     @Binding var mapCenter: CLLocationCoordinate2D?
 
-    func makeUIView(context: Context) -> UIView {
-        let containerView = UIView()
-        containerView.backgroundColor = .systemBackground
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
+        mapView.showsUserLocation = true
 
-        // TODO: KakaoMapsSDK 설치 후 활성화
-        // SPM으로 https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM 추가 후
-        // 아래 코드를 활성화하세요
+        // 초기 위치 설정 (고려대 근처)
+        let initialCenter = currentLocation ?? CLLocationCoordinate2D(
+            latitude: 37.5836,
+            longitude: 127.0587
+        )
 
-        /*
-        // KMViewContainer 생성
-        let container = KMViewContainer(frame: containerView.bounds)
-        container.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        containerView.addSubview(container)
+        let region = MKCoordinateRegion(
+            center: initialCenter,
+            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+        )
+        mapView.setRegion(region, animated: false)
 
-        // KMController 생성 및 설정
-        context.coordinator.mapController = KMController(viewContainer: container)
-        context.coordinator.mapController?.delegate = context.coordinator
-        context.coordinator.mapController?.initEngine()
-
-        // 현재 위치로 카메라 이동
-        if let location = currentLocation {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                if let mapView = context.coordinator.mapController?.getView("mapview") as? KakaoMap {
-                    let cameraUpdate = CameraUpdate.make(
-                        target: MapPoint(longitude: location.longitude, latitude: location.latitude),
-                        zoomLevel: 15,
-                        mapView: mapView
-                    )
-                    mapView.moveCamera(cameraUpdate)
-                }
-            }
-        }
-        */
-
-        // 임시: SDK 설치 전 안내 메시지
-        let label = UILabel(frame: containerView.bounds)
-        label.text = "카카오 지도\n\n1. Xcode에서 Package Dependencies에\n   https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM 추가\n2. KakaoMapView.swift의 주석 해제"
-        label.numberOfLines = 0
-        label.textAlignment = .center
-        label.textColor = .secondaryLabel
-        label.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        containerView.addSubview(label)
-
-        return containerView
+        return mapView
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // TODO: KakaoMapsSDK 설치 후 활성화
-
-        /*
-        guard let mapView = context.coordinator.mapController?.getView("mapview") as? KakaoMap else {
-            return
-        }
-
-        // 기존 POI 제거
-        context.coordinator.removePois()
+    func updateUIView(_ mapView: MKMapView, context: Context) {
+        // 기존 어노테이션 제거
+        mapView.removeAnnotations(mapView.annotations.filter { !($0 is MKUserLocation) })
 
         // 식당 마커 추가
-        if let labelManager = mapView.getLabelManager() {
-            let layer = labelManager.addLabelLayer(option: LabelLayerOptions(
-                layerID: "restaurants",
-                competitionType: .none,
-                competitionUnit: .symbolFirst,
-                orderType: .rank,
-                zOrder: 0
-            ))
+        for restaurant in restaurants {
+            guard let coordinate = restaurant.coordinate else { continue }
 
-            for restaurant in restaurants {
-                guard let location = restaurant.coordinate else { continue }
-
-                let position = MapPoint(longitude: location.longitude, latitude: location.latitude)
-
-                // POI 스타일 생성
-                let poiStyle = PoiStyle(styleID: "restaurant_poi")
-                poiStyle.iconStyle = PoiIconStyle(
-                    symbol: UIImage(systemName: "fork.knife.circle.fill"),
-                    anchorPoint: CGPoint(x: 0.5, y: 1.0)
-                )
-
-                // POI 옵션 생성
-                let poiOption = PoiOptions(
-                    styleID: "restaurant_poi",
-                    poiID: restaurant.id
-                )
-                poiOption.rank = 0
-                poiOption.clickable = true
-
-                // POI 생성 및 추가
-                let poi = layer?.addPoi(option: poiOption, at: position, callback: { poi in
-                    // POI 클릭 이벤트
-                    context.coordinator.handlePoiTap(poiId: restaurant.id)
-                })
-
-                context.coordinator.pois.append(poi)
-            }
-        }
-
-        // 선택된 식당이 있으면 카메라 이동
-        if let selected = selectedRestaurant,
-           let location = selected.coordinate {
-            let cameraUpdate = CameraUpdate.make(
-                target: MapPoint(longitude: location.longitude, latitude: location.latitude),
-                zoomLevel: 16,
-                mapView: mapView,
-                animation: CameraAnimation(type: .easeIn, duration: 0.3)
+            let annotation = RestaurantAnnotation(
+                coordinate: coordinate,
+                restaurant: restaurant
             )
-            mapView.moveCamera(cameraUpdate)
+            mapView.addAnnotation(annotation)
         }
-        */
+
+        // mapCenter가 변경되면 지도 이동
+        if let center = mapCenter {
+            let region = MKCoordinateRegion(
+                center: center,
+                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+            )
+            mapView.setRegion(region, animated: true)
+        }
+
+        // 선택된 식당이 있으면 해당 위치로 이동
+        if let selected = selectedRestaurant,
+           let coordinate = selected.coordinate {
+            let region = MKCoordinateRegion(
+                center: coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+            )
+            mapView.setRegion(region, animated: true)
+        }
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    class Coordinator: NSObject {
+    class Coordinator: NSObject, MKMapViewDelegate {
         var parent: KakaoMapView
-        var mapController: Any? // KMController 타입 (SDK 설치 후 활성화)
-        var pois: [Any] = [] // Poi 배열 (SDK 설치 후 활성화)
 
         init(_ parent: KakaoMapView) {
             self.parent = parent
         }
 
-        func removePois() {
-            // TODO: KakaoMapsSDK 설치 후 POI 제거 로직 구현
-            pois.removeAll()
-        }
-
-        func handlePoiTap(poiId: String) {
-            // 선택된 식당 업데이트
-            if let restaurant = parent.restaurants.first(where: { $0.id == poiId }) {
-                parent.selectedRestaurant = restaurant
+        // 커스텀 핀 뷰
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            guard let restaurantAnnotation = annotation as? RestaurantAnnotation else {
+                return nil
             }
+
+            let identifier = "RestaurantPin"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = true
+            } else {
+                annotationView?.annotation = annotation
+            }
+
+            // 핀 색상 (SafeEat 프라이머리 컬러)
+            annotationView?.markerTintColor = UIColor(red: 0.977, green: 0.427, blue: 0.355, alpha: 1.0)
+            annotationView?.glyphImage = UIImage(systemName: "fork.knife")
+
+            return annotationView
+        }
+
+        // 핀 선택 시
+        func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+            guard let annotation = view.annotation as? RestaurantAnnotation else {
+                return
+            }
+            parent.selectedRestaurant = annotation.restaurant
         }
     }
 }
 
-// MARK: - MapControllerDelegate (SDK 설치 후 활성화)
-/*
-extension KakaoMapView.Coordinator: MapControllerDelegate {
-    func addViews() {
-        // 맵뷰 생성
-        let defaultPosition = MapPoint(
-            longitude: parent.currentLocation?.longitude ?? 127.0587,
-            latitude: parent.currentLocation?.latitude ?? 37.5836
-        )
+// MARK: - Restaurant Annotation
 
-        let mapviewInfo = MapviewInfo(
-            viewName: "mapview",
-            viewInfoName: "map",
-            defaultPosition: defaultPosition,
-            defaultLevel: 15
-        )
+class RestaurantAnnotation: NSObject, MKAnnotation {
+    let coordinate: CLLocationCoordinate2D
+    let restaurant: Restaurant
 
-        if let mapController = mapController as? KMController,
-           mapController.addView(mapviewInfo) {
-            print("카카오 맵뷰 생성 성공")
-        }
+    var title: String? {
+        restaurant.name
     }
 
-    func containerDidResized(_ size: CGSize) {
-        // 컨테이너 크기 변경 시 처리
+    var subtitle: String? {
+        restaurant.category
     }
 
-    func authentication(didSucceed: Bool) {
-        if didSucceed {
-            print("카카오 지도 인증 성공")
-            // 맵뷰 추가
-            addViews()
-        } else {
-            print("카카오 지도 인증 실패")
-        }
+    init(coordinate: CLLocationCoordinate2D, restaurant: Restaurant) {
+        self.coordinate = coordinate
+        self.restaurant = restaurant
+        super.init()
     }
 }
-*/
