@@ -11,7 +11,6 @@
 		46D6504727C74E80956A34C9 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998E3B49765E4701B27CD6FE /* FavoritesView.swift */; };
 		D089B9FEB6764622AA93DEE8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */; };
 		56E4F0DCB9AA4073A8092912 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */; };
-		54249B866667458FA73613B0 /* NaverMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A778A9A238D54C7595930AFB /* NaverMapView.swift */; };
 		F6041FE904E2408FB81B9892 /* PersonManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B105939B38A4962BAD45BFD /* PersonManagementView.swift */; };
 		B00874356CA849C9BA4C8C78 /* RestaurantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */; };
 		3EDDB32726944B62AE0F3FB9 /* RestaurantSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */; };
@@ -36,7 +35,6 @@
 		998E3B49765E4701B27CD6FE /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-		A778A9A238D54C7595930AFB /* NaverMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverMapView.swift; sourceTree = "<group>"; };
 		8B105939B38A4962BAD45BFD /* PersonManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonManagementView.swift; sourceTree = "<group>"; };
 		DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailView.swift; sourceTree = "<group>"; };
 		C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantSearchView.swift; sourceTree = "<group>"; };
@@ -82,7 +80,6 @@
 				998E3B49765E4701B27CD6FE /* FavoritesView.swift */,
 				326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */,
 				D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */,
-				A778A9A238D54C7595930AFB /* NaverMapView.swift */,
 				8B105939B38A4962BAD45BFD /* PersonManagementView.swift */,
 				DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */,
 				C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */,
@@ -234,7 +231,6 @@
 				46D6504727C74E80956A34C9 /* FavoritesView.swift in Sources */,
 				D089B9FEB6764622AA93DEE8 /* LoginView.swift in Sources */,
 				56E4F0DCB9AA4073A8092912 /* MainTabView.swift in Sources */,
-				54249B866667458FA73613B0 /* NaverMapView.swift in Sources */,
 				F6041FE904E2408FB81B9892 /* PersonManagementView.swift in Sources */,
 				B00874356CA849C9BA4C8C78 /* RestaurantDetailView.swift in Sources */,
 				3EDDB32726944B62AE0F3FB9 /* RestaurantSearchView.swift in Sources */,
