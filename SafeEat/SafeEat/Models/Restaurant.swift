@@ -14,12 +14,11 @@ struct Restaurant: Identifiable {
     let rating: Double
     let distance: String
     let address: String
-    let operatingStatus: String // 예: "14:30 브레이크 타임"
+    let operatingStatus: String
     let operatingHours: [DayOperatingHours]
     let totalMenuCount: Int
     let imageUrl: String?
 
-    // 샘플 데이터
     static let sample = Restaurant(
         id: "1",
         name: "더 테이블",
@@ -57,6 +56,7 @@ struct Menu: Identifiable {
     let description: String?
     let ingredients: [String]
     let imageUrl: String?
+    let probabilityTags: [String]  // 추가: 확률 태그들
 }
 
 struct Person: Identifiable {
@@ -75,4 +75,9 @@ struct SafeMenuInfo: Identifiable {
     let person: Person
     let safeMenuCount: Int
     let safeMenus: [Menu]
+}
+
+enum MenuTab {
+    case safe    // 안전한 메뉴
+    case other   // 그 외 메뉴
 }
