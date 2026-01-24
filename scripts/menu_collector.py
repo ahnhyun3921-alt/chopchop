@@ -170,6 +170,35 @@ def search_restaurants(location, radius=5000, size=15):
 
 # ==================== 네이버 이미지 검색 ====================
 
+def clean_restaurant_name(name):
+    """식당명에서 지점명 제거 (예: '맛있는집 평촌점' → '맛있는집')
+
+    제거 대상:
+    - 지역명+점: 평촌점, 안양점, 범계점, 인덕원점, 서울점 등
+    - 일반 지점명: 본점, 직영점, 1호점, 2호점 등
+    """
+    # 패턴: (지역명)?(본|직영|[0-9]+호)?점
+    # 지역명 목록
+    locations = [
+        '평촌', '안양', '범계', '인덕원', '관악', '금정', '산본', '수원', '분당',
+        '강남', '서울', '신촌', '홍대', '이태원', '명동', '종로', '동대문', '건대',
+        '잠실', '송파', '강동', '노원', '신림', '구로', '영등포', '여의도',
+        '일산', '부천', '인천', '대전', '대구', '부산', '광주'
+    ]
+
+    # 1. 지역명+점 제거 (예: 평촌점, 안양점)
+    for loc in locations:
+        name = re.sub(rf'\s*{loc}\s*점\s*$', '', name)
+
+    # 2. 일반 지점명 제거 (본점, 직영점, 1호점, 2호점 등)
+    name = re.sub(r'\s*(본|직영|신관|구관|[0-9]+\s*호)\s*점\s*$', '', name)
+
+    # 3. 단순히 "점"으로 끝나는 경우도 처리 (예: "00점")
+    # 단, 메뉴명에 포함될 수 있는 단어는 제외
+    name = re.sub(r'\s+\d+\s*점\s*$', '', name)
+
+    return name.strip()
+
 def search_menu_images(restaurant_name, location, num=10):
     """네이버 이미지 검색으로 메뉴 이미지 URL 찾기
 
@@ -184,8 +213,13 @@ def search_menu_images(restaurant_name, location, num=10):
         "X-Naver-Client-Secret": NAVER_CLIENT_SECRET
     }
 
-    # 검색 쿼리 조합 (지역 + 식당명 + 메뉴)
-    query = f"{location} {restaurant_name} 메뉴판"
+    # 지점명 제거 (예: '맛있는집 평촌점' → '맛있는집')
+    clean_name = clean_restaurant_name(restaurant_name)
+
+    # 검색 쿼리 조합 (지역 + 식당명(지점명 제외) + 메뉴)
+    query = f"{location} {clean_name} 메뉴"
+    debug_log(f"원래 식당명: '{restaurant_name}'")
+    debug_log(f"정제된 식당명: '{clean_name}'")
     debug_log(f"검색 쿼리: '{query}'")
 
     params = {
@@ -663,7 +697,10 @@ def auto_collect_menus(restaurant, location, db, dry_run=False):
     print(f"📍 {restaurant['address']}")
 
     # 1. 네이버 이미지 검색 (location 파라미터 전달!)
-    print(f"  🔍 '{location} {restaurant['name']} 메뉴판' 검색 중...")
+    clean_name = clean_restaurant_name(restaurant['name'])
+    print(f"  🔍 '{location} {clean_name} 메뉴' 검색 중...")
+    if clean_name != restaurant['name']:
+        print(f"     (원래 이름: {restaurant['name']})")
     image_results = search_menu_images(restaurant['name'], location=location, num=20)
 
     if not image_results:
