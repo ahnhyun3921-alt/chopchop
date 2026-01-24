@@ -17,7 +17,10 @@ struct RestaurantDetailView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     // 이미지 갤러리
-                    ImageGallery()
+                    ZStack(alignment: .top) {
+                        ImageGallery()
+                    }
+                    .frame(height: 280)
 
                     // 위치 정보
                     LocationSection(
@@ -26,6 +29,7 @@ struct RestaurantDetailView: View {
                         )
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
+                        .background(Color.white)
 
                     // 영업시간
                     OperatingHoursSection(
@@ -35,6 +39,7 @@ struct RestaurantDetailView: View {
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
+                    .background(Color.white)
 
                     Divider()
                         .background(Color(hex: "F5F5F5"))
@@ -43,9 +48,10 @@ struct RestaurantDetailView: View {
                     // 메뉴 섹션
                     MenuSection(viewModel: viewModel)
                         .padding(.top, 20)
+                        .background(Color.white)
                 }
             }
-            .ignoresSafeArea(.all, edges: .top)
+            .background(Color.white)
 
             // 네비게이션 바 - 이미지 위에 겹침
             VStack(spacing: 0) {
@@ -115,19 +121,22 @@ struct NavigationBar: View {
 // MARK: - Image Gallery
 struct ImageGallery: View {
     var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
-            ForEach(0..<4) { index in
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fill)
-                    .overlay(
-                        Image(systemName: "photo")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray.opacity(0.3))
-                    )
+        GeometryReader { geometry in
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
+                ForEach(0..<4) { index in
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(1, contentMode: .fill)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray.opacity(0.3))
+                        )
+                }
             }
+            .frame(height: 280 + geometry.safeAreaInsets.top)
+            .offset(y: -geometry.safeAreaInsets.top)
         }
-        .frame(height: 320)
     }
 }
 
