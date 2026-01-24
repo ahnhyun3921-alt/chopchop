@@ -20,30 +20,33 @@ struct RestaurantDetailView: View {
                     // 이미지 갤러리
                     ImageGallery()
 
-                    // 위치 정보
-                    LocationSection(
-                        rating: viewModel.restaurant.rating,
-                        distance: viewModel.restaurant.distance
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    // 위치 정보 - 흰색 배경으로 완전 분리
+                    VStack(spacing: 0) {
+                        LocationSection(
+                            rating: viewModel.restaurant.rating,
+                            distance: viewModel.restaurant.distance
+                        )
+                        .padding(.horizontal, 20)
+                        .padding(.top, 16)
 
-                    // 영업시간
-                    OperatingHoursSection(
-                        status: viewModel.restaurant.operatingStatus,
-                        hours: viewModel.restaurant.operatingHours,
-                        isExpanded: $viewModel.isOperatingHoursExpanded
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.top, 12)
+                        // 영업시간
+                        OperatingHoursSection(
+                            status: viewModel.restaurant.operatingStatus,
+                            hours: viewModel.restaurant.operatingHours,
+                            isExpanded: $viewModel.isOperatingHoursExpanded
+                        )
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
 
-                    Divider()
-                        .background(Color(hex: "F5F5F5"))
-                        .padding(.top, 20)
+                        Divider()
+                            .background(Color(hex: "F5F5F5"))
+                            .padding(.top, 20)
 
-                    // 메뉴 섹션
-                    MenuSection(viewModel: viewModel)
-                        .padding(.top, 20)
+                        // 메뉴 섹션
+                        MenuSection(viewModel: viewModel)
+                            .padding(.top, 20)
+                    }
+                    .background(Color.white)
                 }
             }
         }
@@ -110,16 +113,50 @@ struct NavigationBar: View {
 // MARK: - Image Gallery
 struct ImageGallery: View {
     var body: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
-            ForEach(0..<4) { index in
-                Rectangle()
-                    .fill(Color.gray.opacity(0.2))
-                    .aspectRatio(1, contentMode: .fill)
-                    .overlay(
-                        Image(systemName: "photo")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray.opacity(0.3))
-                    )
+        GeometryReader { geometry in
+            let width = geometry.size.width
+            let imageSize = width / 2
+
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: imageSize, height: imageSize)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray.opacity(0.3))
+                        )
+
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: imageSize, height: imageSize)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray.opacity(0.3))
+                        )
+                }
+
+                HStack(spacing: 0) {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: imageSize, height: imageSize)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray.opacity(0.3))
+                        )
+
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: imageSize, height: imageSize)
+                        .overlay(
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray.opacity(0.3))
+                        )
+                }
             }
         }
         .frame(height: 280)
