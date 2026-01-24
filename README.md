@@ -74,8 +74,26 @@ SafeEat/
   - 즐겨찾기 Firebase 저장
   - 인물(제한 식품) 관리 서비스
   - 로그인 UI 구현
+- [x] **네이버 지도 API 통합 (코드 작성 완료)**
+  - NaverSearchService: 식당 검색 API
+  - NaverMapView: 지도 뷰 구현
+  - LocationManager: 위치 권한 및 현재 위치
+  - RestaurantSearchView: 검색 화면 (리스트/지도)
+- [x] **Claude AI API 통합 (코드 작성 완료)**
+  - ClaudeAPIService: 메뉴 분석 API
+  - MenuAnalysisService: 안전한 메뉴 필터링
+  - 메뉴 → 재료 분석
+  - 알러지 확률 계산
 
-### ⚙️ 설정 필요
+### ⚙️ 설정 필요 (사용자가 수행해야 할 작업)
+
+#### 1. 환경 변수 설정
+```bash
+cp .env.example .env
+# .env 파일을 열어서 API 키들을 실제 값으로 교체
+```
+
+#### 2. Firebase 설정
 - [ ] Firebase iOS SDK 설치 (SPM - Xcode에서 수동 추가 필요)
 - [ ] Firebase 프로젝트 생성 및 GoogleService-Info.plist 교체
 - [ ] Apple Sign In Capability 추가
@@ -83,12 +101,27 @@ SafeEat/
 
 **설정 가이드**: `FIREBASE_SETUP.md` 참조
 
+#### 3. 네이버 지도 API 설정
+- [ ] 네이버 클라우드 플랫폼 계정 생성
+- [ ] Maps API 키 발급 (Client ID)
+- [ ] Local Search API 키 발급
+- [ ] CocoaPods으로 NMapsMap SDK 설치
+- [ ] Info.plist에 API 키 및 위치 권한 추가
+
+**설정 가이드**: `NAVER_MAPS_SETUP.md` 참조
+
+#### 4. Claude API 설정
+- [ ] Anthropic Console에서 API 키 발급
+- [ ] .env 파일에 API 키 추가
+
+**설정 가이드**: `CLAUDE_API_SETUP.md` 참조
+
 ### 🚧 다음 단계
-- [ ] 네이버 지도 API 연동
-- [ ] Claude API 연동
-- [ ] 식당 검색 기능
-- [ ] 재료 관리 화면
-- [ ] 인물 관리 화면
+- [ ] 재료 관리 화면 (사용자가 제한 식품 추가/삭제)
+- [ ] 인물 관리 화면 (가족 구성원 및 제한 식품 관리)
+- [ ] 메인 화면 (홈 피드)
+- [ ] 프로필 화면
+- [ ] 설정 화면
 
 ## 실행 방법
 

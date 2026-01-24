@@ -8,7 +8,13 @@
 import SwiftUI
 
 struct RestaurantDetailView: View {
-    @StateObject private var viewModel = RestaurantDetailViewModel()
+    let restaurant: Restaurant?
+    @StateObject private var viewModel: RestaurantDetailViewModel
+
+    init(restaurant: Restaurant? = nil) {
+        self.restaurant = restaurant
+        _viewModel = StateObject(wrappedValue: RestaurantDetailViewModel(restaurant: restaurant ?? .sample))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
