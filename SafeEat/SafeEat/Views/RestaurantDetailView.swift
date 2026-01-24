@@ -302,6 +302,8 @@ struct WarningMessage: View {
     }
 }
 
-#Preview {
-    RestaurantDetailView()
+struct RestaurantDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        RestaurantDetailView()
+    }
 }
