@@ -21,4 +21,8 @@ struct Config {
     // https://console.ncloud.com/에서 발급
     static let naverClientId = "YOUR_NAVER_CLIENT_ID"
     static let naverClientSecret = "YOUR_NAVER_CLIENT_SECRET"
+
+    // Kakao API Key
+    // https://developers.kakao.com/에서 발급
+    static let kakaoRestAPIKey = "YOUR_KAKAO_REST_API_KEY"
 }
