@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B6D0F2B2BF344D56B1A8215C /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */; };
+
 		ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */; };
 
 		EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */; };
@@ -27,6 +29,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+
 		0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoLocalService.swift; sourceTree = "<group>"; };
 
 		765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
@@ -104,7 +108,8 @@ C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */,
 		Views_Folder /* Views */ = {
 			isa = PBXGroup;
 			children = (
-												765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */,
+																4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */,
+765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */,
 6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */,
 RestaurantDetailView /* RestaurantDetailView.swift */,
 			);
@@ -193,7 +198,8 @@ RestaurantDetailView /* RestaurantDetailView.swift */,
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-															ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */,
+																			B6D0F2B2BF344D56B1A8215C /* MainTabView.swift in Sources */,
+ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */,
 EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */,
 8F9A6577966C4241819A0670 /* FavoritesView.swift in Sources */,
 );
