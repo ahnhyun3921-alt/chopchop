@@ -6,127 +6,83 @@
 //
 
 import Foundation
-// Firebase는 나중에 설치 후 활성화
-// import FirebaseFirestore
-// import FirebaseFirestoreSwift
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 class FirestoreService {
     static let shared = FirestoreService()
-    // private let db = Firestore.firestore()
+    private let db = Firestore.firestore()
 
     private init() {}
 
-    // MARK: - Favorites (Firebase 설치 후 활성화)
+    // MARK: - Favorites
 
     /// 즐겨찾기 추가
     func addFavorite(userId: String, restaurantId: String) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults 사용
-        var favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
-        if !favorites.contains(restaurantId) {
-            favorites.append(restaurantId)
-            UserDefaults.standard.set(favorites, forKey: "favorites_\(userId)")
-        }
+        let docRef = db.collection("users").document(userId).collection("favorites").document(restaurantId)
+        try await docRef.setData([
+            "restaurantId": restaurantId,
+            "createdAt": FieldValue.serverTimestamp()
+        ])
     }
 
     /// 즐겨찾기 제거
     func removeFavorite(userId: String, restaurantId: String) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults 사용
-        var favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
-        favorites.removeAll { $0 == restaurantId }
-        UserDefaults.standard.set(favorites, forKey: "favorites_\(userId)")
+        let docRef = db.collection("users").document(userId).collection("favorites").document(restaurantId)
+        try await docRef.delete()
     }
 
     /// 즐겨찾기 상태 확인
     func isFavorite(userId: String, restaurantId: String) async throws -> Bool {
-        // Firebase 설치 전 임시 구현 - UserDefaults 사용
-        let favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
-        return favorites.contains(restaurantId)
+        let docRef = db.collection("users").document(userId).collection("favorites").document(restaurantId)
+        let snapshot = try await docRef.getDocument()
+        return snapshot.exists
     }
 
     /// 모든 즐겨찾기 가져오기
     func getFavorites(userId: String) async throws -> [String] {
-        // Firebase 설치 전 임시 구현 - UserDefaults 사용
-        return UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
+        let snapshot = try await db.collection("users").document(userId).collection("favorites").getDocuments()
+        return snapshot.documents.map { $0.documentID }
     }
 
-    // MARK: - User Persons (제한 식품 관리) - Firebase 설치 후 활성화
+    // MARK: - User Persons (제한 식품 관리)
 
     /// 사용자의 인물 추가
     func addPerson(userId: String, person: Person) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults에 JSON으로 저장
-        var persons = try await getPersons(userId: userId)
-        persons.append(person)
-
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(persons) {
-            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
-        }
-        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
+        let docRef = db.collection("users").document(userId).collection("persons").document(person.id)
+        try docRef.setData(from: person)
     }
 
     /// 사용자의 인물 목록 가져오기
     func getPersons(userId: String) async throws -> [Person] {
-        // Firebase 설치 전 임시 구현 - UserDefaults에서 JSON 디코딩
-        if let data = UserDefaults.standard.data(forKey: "persons_\(userId)") {
-            let decoder = JSONDecoder()
-            if let persons = try? decoder.decode([Person].self, from: data) {
-                return persons
-            }
-        }
-        // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
-        return []
+        let snapshot = try await db.collection("users").document(userId).collection("persons").getDocuments()
+        return snapshot.documents.compactMap { try? $0.data(as: Person.self) }
     }
 
     /// 사용자의 인물 삭제
     func deletePerson(userId: String, personId: String) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults에서 삭제
-        var persons = try await getPersons(userId: userId)
-        persons.removeAll { $0.id == personId }
-
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(persons) {
-            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
-        }
-        // TODO: Firebase 설치 후 Firestore에서 삭제하도록 변경
+        let docRef = db.collection("users").document(userId).collection("persons").document(personId)
+        try await docRef.delete()
     }
 
     /// 사용자의 인물 업데이트
     func updatePerson(userId: String, person: Person) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults에서 업데이트
-        var persons = try await getPersons(userId: userId)
-        if let index = persons.firstIndex(where: { $0.id == person.id }) {
-            persons[index] = person
-        }
-
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(persons) {
-            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
-        }
-        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
+        let docRef = db.collection("users").document(userId).collection("persons").document(person.id)
+        try docRef.setData(from: person, merge: true)
     }
 
-    // MARK: - Restaurant Cache (네이버 검색 결과 캐싱) - Firebase 설치 후 활성화
+    // MARK: - Restaurant Cache (카카오 검색 결과 캐싱)
 
     /// 식당 정보 캐시에 저장
     func cacheRestaurant(_ restaurant: Restaurant) async throws {
-        // Firebase 설치 전 임시 구현 - UserDefaults에 JSON으로 저장
-        let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(restaurant) {
-            UserDefaults.standard.set(encoded, forKey: "restaurant_\(restaurant.id)")
-        }
-        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
+        let docRef = db.collection("restaurants").document(restaurant.id)
+        try docRef.setData(from: restaurant, merge: true)
     }
 
     /// 캐시된 식당 정보 가져오기
     func getCachedRestaurant(restaurantId: String) async throws -> Restaurant? {
-        // Firebase 설치 전 임시 구현 - UserDefaults에서 JSON 디코딩
-        if let data = UserDefaults.standard.data(forKey: "restaurant_\(restaurantId)") {
-            let decoder = JSONDecoder()
-            if let restaurant = try? decoder.decode(Restaurant.self, from: data) {
-                return restaurant
-            }
-        }
-        // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
-        return nil
+        let docRef = db.collection("restaurants").document(restaurantId)
+        let snapshot = try await docRef.getDocument()
+        return try? snapshot.data(as: Restaurant.self)
     }
 }
