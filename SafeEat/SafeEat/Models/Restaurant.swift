@@ -84,14 +84,40 @@ struct DayOperatingHours: Identifiable, Codable {
     }
 }
 
-struct Menu: Identifiable {
+struct Menu: Identifiable, Codable {
     let id: String
+    let restaurantId: String  // 어느 식당의 메뉴인지
     let name: String
     let price: Int
     let description: String?
-    let ingredients: [String]
+    let ingredients: [String]  // OCR로 추출한 재료들
     let imageUrl: String?
     let probabilityTags: [String]  // 추가: 확률 태그들
+    let contributorId: String?  // 누가 등록했는지
+    let createdAt: Date?  // 언제 등록했는지
+
+    // OCR로 메뉴 생성할 때 사용하는 생성자
+    init(id: String = UUID().uuidString,
+         restaurantId: String,
+         name: String,
+         price: Int,
+         description: String? = nil,
+         ingredients: [String],
+         imageUrl: String? = nil,
+         probabilityTags: [String] = [],
+         contributorId: String? = nil,
+         createdAt: Date? = Date()) {
+        self.id = id
+        self.restaurantId = restaurantId
+        self.name = name
+        self.price = price
+        self.description = description
+        self.ingredients = ingredients
+        self.imageUrl = imageUrl
+        self.probabilityTags = probabilityTags
+        self.contributorId = contributorId
+        self.createdAt = createdAt
+    }
 }
 
 struct Person: Identifiable, Codable {

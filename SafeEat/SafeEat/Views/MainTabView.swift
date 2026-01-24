@@ -116,6 +116,19 @@ struct ProfileView: View {
                         .padding(.vertical, 8)
                     }
 
+                    // 기여
+                    Section {
+                        NavigationLink(destination: MenuUploadView()) {
+                            SettingRow(icon: "camera.fill", title: "메뉴 기여하기")
+                        }
+
+                        NavigationLink(destination: AutoMenuCollectionView()) {
+                            SettingRow(icon: "wand.and.stars", title: "자동 메뉴 수집 (관리자)")
+                        }
+                    } header: {
+                        Text("기여")
+                    }
+
                     // 설정
                     Section {
                         NavigationLink(destination: Text("알림 설정")) {

@@ -85,4 +85,42 @@ class FirestoreService {
         let snapshot = try await docRef.getDocument()
         return try? snapshot.data(as: Restaurant.self)
     }
+
+    // MARK: - Menus (메뉴 데이터)
+
+    /// 메뉴 추가
+    func addMenu(_ menu: Menu) async throws {
+        let docRef = db.collection("restaurants")
+            .document(menu.restaurantId)
+            .collection("menus")
+            .document(menu.id)
+        try docRef.setData(from: menu)
+    }
+
+    /// 식당의 모든 메뉴 가져오기
+    func getMenus(restaurantId: String) async throws -> [Menu] {
+        let snapshot = try await db.collection("restaurants")
+            .document(restaurantId)
+            .collection("menus")
+            .getDocuments()
+        return snapshot.documents.compactMap { try? $0.data(as: Menu.self) }
+    }
+
+    /// 메뉴 삭제
+    func deleteMenu(restaurantId: String, menuId: String) async throws {
+        let docRef = db.collection("restaurants")
+            .document(restaurantId)
+            .collection("menus")
+            .document(menuId)
+        try await docRef.delete()
+    }
+
+    /// 메뉴 업데이트
+    func updateMenu(_ menu: Menu) async throws {
+        let docRef = db.collection("restaurants")
+            .document(menu.restaurantId)
+            .collection("menus")
+            .document(menu.id)
+        try docRef.setData(from: menu, merge: true)
+    }
 }
