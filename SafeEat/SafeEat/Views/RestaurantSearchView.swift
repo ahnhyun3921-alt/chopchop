@@ -103,7 +103,7 @@ struct RestaurantSearchView: View {
                 }
                 // 결과 표시
                 else if showMap {
-                    NaverMapView(
+                    KakaoMapView(
                         restaurants: $viewModel.restaurants,
                         selectedRestaurant: $viewModel.selectedRestaurant,
                         currentLocation: locationManager.currentLocation
