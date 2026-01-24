@@ -12,6 +12,8 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
+    @State private var selectedRestaurantForNav: Restaurant?
+    @State private var isNavigatingToDetail = false
 
     // 드래그 가능한 리스트 높이
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.3  // 초기 30%
@@ -84,6 +86,32 @@ struct RestaurantSearchView: View {
                         .frame(width: 40, height: 5)
                         .padding(.top, 8)
                         .padding(.bottom, 4)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    isDragging = true
+                                    let dragAmount = -value.translation.height  // 위로 드래그하면 양수
+                                    let newHeight = (UIScreen.main.bounds.height * 0.3) + dragAmount
+                                    sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
+                                }
+                                .onEnded { value in
+                                    isDragging = false
+
+                                    // 중간 지점
+                                    let midHeight = (minSheetHeight + maxSheetHeight) / 2
+
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                        if sheetHeight < midHeight {
+                                            // 아래쪽에 가까우면 최소로
+                                            sheetHeight = minSheetHeight
+                                        } else {
+                                            // 위쪽에 가까우면 최대로
+                                            sheetHeight = maxSheetHeight
+                                        }
+                                    }
+                                }
+                        )
+
                     // 로딩 또는 에러 상태
                     if viewModel.isLoading {
                         VStack {
@@ -139,17 +167,18 @@ struct RestaurantSearchView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 ForEach(viewModel.restaurants) { restaurant in
-                                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                                    Button(action: {
+                                        // 지도 중심 이동
+                                        viewModel.selectedRestaurant = restaurant
+                                        viewModel.mapCenter = restaurant.coordinate
+
+                                        // 상세 페이지로 이동
+                                        selectedRestaurantForNav = restaurant
+                                        isNavigatingToDetail = true
+                                    }) {
                                         RestaurantSearchCard(restaurant: restaurant)
                                     }
                                     .buttonStyle(PlainButtonStyle())
-                                    .simultaneousGesture(
-                                        TapGesture().onEnded {
-                                            // 탭 시 지도 중심 이동
-                                            viewModel.selectedRestaurant = restaurant
-                                            viewModel.mapCenter = restaurant.coordinate
-                                        }
-                                    )
 
                                     Divider()
                                         .background(Color(hex: "#EEEEEE"))
@@ -158,38 +187,20 @@ struct RestaurantSearchView: View {
                             .padding(.top, 12)
                         }
                         .frame(maxWidth: .infinity, maxHeight: sheetHeight - 25)
+                        .background(
+                            NavigationLink(
+                                destination: selectedRestaurantForNav.map { RestaurantDetailView(restaurant: $0) },
+                                isActive: $isNavigatingToDetail
+                            ) {
+                                EmptyView()
+                            }
+                        )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                 .background(Color.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            isDragging = true
-                            let dragAmount = -value.translation.height  // 위로 드래그하면 양수
-                            let newHeight = sheetHeight + dragAmount
-                            sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
-                        }
-                        .onEnded { value in
-                            isDragging = false
-                            let velocity = -value.predictedEndTranslation.height
-
-                            // 중간 지점
-                            let midHeight = (minSheetHeight + maxSheetHeight) / 2
-
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                if sheetHeight < midHeight {
-                                    // 아래쪽에 가까우면 최소로
-                                    sheetHeight = minSheetHeight
-                                } else {
-                                    // 위쪽에 가까우면 최대로
-                                    sheetHeight = maxSheetHeight
-                                }
-                            }
-                        }
-                )
             }
         }
         .navigationBarHidden(true)
