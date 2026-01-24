@@ -651,6 +651,46 @@ CATEGORY_ORDER = [
     "해물류", "일식", "중식", "양식", "사이드", "음료/디저트", "주류", "기타"
 ]
 
+# 음식이 아닌 것들 (필터링용)
+NON_FOOD_KEYWORDS = [
+    # 일반 텍스트
+    "전화", "주소", "영업", "시간", "휴무", "문의", "예약", "배달", "포장",
+    "카드", "현금", "계좌", "입금", "결제", "할인", "이벤트", "쿠폰",
+    "주차", "wifi", "화장실", "좌석", "테이블", "룸",
+    # 숫자/기호만
+    "원", "won", "₩", "~", "-", "+",
+    # 설명문
+    "선택", "추가", "변경", "업그레이드", "세트", "단품", "기본",
+    "대", "중", "소", "특대", "점보",
+    # 기타
+    "안내", "공지", "메뉴판", "가격표", "menu", "price",
+]
+
+def is_valid_food(menu_name):
+    """유효한 음식 메뉴인지 확인"""
+    if not menu_name or len(menu_name) < 2:
+        return False
+
+    # 숫자만 있으면 제외
+    if menu_name.replace(' ', '').isdigit():
+        return False
+
+    # 너무 긴 이름은 제외 (설명문일 가능성)
+    if len(menu_name) > 20:
+        return False
+
+    # 음식 아닌 키워드 포함시 제외
+    menu_lower = menu_name.lower()
+    for keyword in NON_FOOD_KEYWORDS:
+        if keyword in menu_lower:
+            return False
+
+    # 한글이 하나도 없으면 제외 (영어/숫자만)
+    if not any('\uac00' <= c <= '\ud7a3' for c in menu_name):
+        return False
+
+    return True
+
 def classify_menu(menu_name):
     """메뉴명으로 카테고리 분류"""
     menu_lower = menu_name.lower()
@@ -687,7 +727,7 @@ def parse_menus(text, restaurant_id, restaurant_name="", category=""):
             # 메뉴명 추출
             menu_name = extract_menu_name(line)
 
-            if menu_name:
+            if menu_name and is_valid_food(menu_name):
                 debug_log(f"메뉴 발견: '{menu_name}' = {price:,}원")
 
                 # 재료 추출 (괄호 안 내용)
@@ -704,6 +744,8 @@ def parse_menus(text, restaurant_id, restaurant_name="", category=""):
                     "createdAt": datetime.now()
                 }
                 menus.append(menu)
+            elif menu_name:
+                debug_log(f"음식 아님, 제외: '{menu_name}'")
 
     debug_log(f"총 {len(menus)}개 메뉴 파싱됨")
     return menus
