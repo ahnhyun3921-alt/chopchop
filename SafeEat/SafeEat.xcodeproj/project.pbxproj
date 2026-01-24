@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05F94212609C4438AC4BC753 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */; };
+		A020C347BC0D4AEABB8F0533 /* ClaudeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D21435472F41518A1C2288 /* ClaudeAPIService.swift */; };
+		2FB33C9AC0F44B88B9840EC4 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7877030BE1F41DEBDE9243A /* Config.swift */; };
+		2C682AFB41334155B58D90D2 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664B36D2B8241E592AD83C8 /* FirestoreService.swift */; };
+		17B8C164960F471ABD29C7A1 /* MenuAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */; };
+		842D2374319C4ABEA8E05188 /* NaverSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */; };
 		SafeEatApp_Swift /* SafeEatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = SafeEatApp /* SafeEatApp.swift */; };
 		RestaurantDetailView_Swift /* RestaurantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RestaurantDetailView /* RestaurantDetailView.swift */; };
 		Restaurant_Swift /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = Restaurant /* Restaurant.swift */; };
@@ -15,6 +21,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		58D21435472F41518A1C2288 /* ClaudeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIService.swift; sourceTree = "<group>"; };
+		C7877030BE1F41DEBDE9243A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		4664B36D2B8241E592AD83C8 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAnalysisService.swift; sourceTree = "<group>"; };
+		64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverSearchService.swift; sourceTree = "<group>"; };
 		SafeEat_App /* SafeEat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeEat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		SafeEatApp /* SafeEatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeEatApp.swift; sourceTree = "<group>"; };
 		RestaurantDetailView /* RestaurantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailView.swift; sourceTree = "<group>"; };
@@ -34,6 +46,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BC99EA57A4DC45F08B5A8C3E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */,
+				58D21435472F41518A1C2288 /* ClaudeAPIService.swift */,
+				C7877030BE1F41DEBDE9243A /* Config.swift */,
+				4664B36D2B8241E592AD83C8 /* FirestoreService.swift */,
+				6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */,
+				64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		Root = {
 			isa = PBXGroup;
 			children = (
@@ -58,7 +83,8 @@
 				Models_Folder /* Models */,
 				ViewModels_Folder /* ViewModels */,
 				Utils_Folder /* Utils */,
-			);
+			
+				BC99EA57A4DC45F08B5A8C3E /* Services */,);
 			path = SafeEat;
 			sourceTree = "<group>";
 		};
@@ -167,7 +193,13 @@
 				Restaurant_Swift /* Restaurant.swift in Sources */,
 				RestaurantDetailViewModel_Swift /* RestaurantDetailViewModel.swift in Sources */,
 				ColorExtension_Swift /* ColorExtension.swift in Sources */,
-			);
+			
+				05F94212609C4438AC4BC753 /* AuthenticationService.swift in Sources */,
+				A020C347BC0D4AEABB8F0533 /* ClaudeAPIService.swift in Sources */,
+				2FB33C9AC0F44B88B9840EC4 /* Config.swift in Sources */,
+				2C682AFB41334155B58D90D2 /* FirestoreService.swift in Sources */,
+				17B8C164960F471ABD29C7A1 /* MenuAnalysisService.swift in Sources */,
+				842D2374319C4ABEA8E05188 /* NaverSearchService.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
