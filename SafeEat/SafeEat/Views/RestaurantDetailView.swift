@@ -413,7 +413,7 @@ struct MenuCard: View {
     let menu: Menu
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             // 메뉴 이미지
             Rectangle()
                 .fill(Color.gray.opacity(0.15))
@@ -468,23 +468,20 @@ struct ProbabilityTag: View {
     private var attributedText: AttributedString {
         var result = AttributedString(text)
 
-        // "우유", "쇠고기", "돼지", "새우" 등 물질명을 찾아서 medium으로 변경
-        let ingredients = ["우유", "쇠고기", "돼지", "새우", "달걀", "갑각류", "조개", "쇠고기", "닭고기", "땅콩", "밀", "대두", "고등어", "게", "새우", "돼지고기", "복숭아", "토마토", "아황산류"]
+        // 기본 폰트: regular
+        result.font = .system(size: 11, weight: .regular)
+
+        // "우유", "쇠고기", "돼지", "새우" 등 알레르기 식품명을 찾아서 medium(굵게)으로 변경
+        let ingredients = ["우유", "쇠고기", "돼지", "새우", "달걀", "갑각류", "조개", "닭고기", "땅콩", "밀", "대두", "고등어", "게", "돼지고기", "복숭아", "토마토", "아황산류", "호두", "잣", "메밀"]
 
         for ingredient in ingredients {
-            if let range = result.range(of: ingredient) {
+            // 모든 발생 위치를 찾아서 medium으로 변경
+            var searchStartIndex = result.startIndex
+            while searchStartIndex < result.endIndex,
+                  let range = result[searchStartIndex..<result.endIndex].range(of: ingredient) {
                 result[range].font = .system(size: 11, weight: .medium)
-            } else {
-                // 나머지는 regular
-                if result.font == nil {
-                    result.font = .system(size: 11, weight: .regular)
-                }
+                searchStartIndex = range.upperBound
             }
-        }
-
-        // 기본 폰트 설정
-        if result.runs.allSatisfy({ $0.font == nil }) {
-            result.font = .system(size: 11, weight: .regular)
         }
 
         return result
