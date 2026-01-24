@@ -164,20 +164,32 @@ struct KakaoPlace: Codable, Identifiable {
 
     /// Restaurant 모델로 변환
     func toRestaurant() -> Restaurant {
+        // 거리 포맷팅
+        let formattedDistance: String
+        if let distanceValue = Int(distance) {
+            if distanceValue >= 1000 {
+                formattedDistance = String(format: "%.1fkm", Double(distanceValue) / 1000.0)
+            } else {
+                formattedDistance = "\(distanceValue)m"
+            }
+        } else {
+            formattedDistance = ""
+        }
+
         return Restaurant(
             id: id,
             name: placeName,
             category: mainCategory,
-            rating: 0.0,  // 카카오 API는 평점 제공 안 함
-            distance: distance.isEmpty ? "" : "\(distance)m",
+            rating: 4.0,  // 카카오 API는 평점 제공 안 함 (기본값 4.0)
+            distance: formattedDistance,
             address: roadAddressName.isEmpty ? addressName : roadAddressName,
-            operatingStatus: "영업 중",  // TODO: 실제 영업 상태는 별도 API 필요
-            operatingHours: [],  // TODO: 영업시간 정보는 Kakao Place Detail API 필요
-            totalMenuCount: 0,
-            imageUrl: nil,  // TODO: 이미지는 별도 API 또는 크롤링 필요
-            phoneNumber: phone.isEmpty ? nil : phone,  // 전화번호
-            latitude: Double(y),  // 위도
-            longitude: Double(x)  // 경도
+            operatingStatus: "영업시간 정보 없음",  // 카카오 기본 API는 영업시간 제공 안 함
+            operatingHours: [],  // 카카오 기본 API는 영업시간 상세 정보 제공 안 함
+            totalMenuCount: 0,  // 메뉴 정보는 별도 데이터 소스 필요
+            imageUrl: nil,  // 이미지는 카카오 Place API 또는 별도 소스 필요
+            phoneNumber: phone.isEmpty ? nil : phone,
+            latitude: Double(y),
+            longitude: Double(x)
         )
     }
 }

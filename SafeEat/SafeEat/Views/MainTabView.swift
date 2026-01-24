@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @StateObject private var favoritesViewModel = FavoritesViewModel()
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -19,6 +20,7 @@ struct MainTabView: View {
                     Text("검색")
                 }
                 .tag(0)
+                .environmentObject(favoritesViewModel)
 
             // 즐겨찾기
             FavoritesView()
@@ -27,6 +29,7 @@ struct MainTabView: View {
                     Text("즐겨찾기")
                 }
                 .tag(1)
+                .environmentObject(favoritesViewModel)
 
             // 인물 관리
             PersonManagementView()

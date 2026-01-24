@@ -318,25 +318,7 @@ class RestaurantSearchViewModel: ObservableObject {
                 size: 15
             )
 
-            restaurants = response.documents.map { place in
-                var restaurant = place.toRestaurant()
-                restaurant = Restaurant(
-                    id: restaurant.id,
-                    name: restaurant.name,
-                    category: restaurant.category,
-                    rating: Double.random(in: 3.5...4.9),
-                    distance: restaurant.distance,
-                    address: restaurant.address,
-                    operatingStatus: restaurant.operatingStatus,
-                    operatingHours: restaurant.operatingHours,
-                    totalMenuCount: restaurant.totalMenuCount,
-                    imageUrl: restaurant.imageUrl,
-                    phoneNumber: restaurant.phoneNumber,
-                    latitude: restaurant.latitude,
-                    longitude: restaurant.longitude
-                )
-                return restaurant
-            }
+            restaurants = response.documents.map { $0.toRestaurant() }
 
             // 검색 결과 첫 번째 위치로 지도 이동
             if let first = restaurants.first, let coord = first.coordinate {
@@ -368,25 +350,7 @@ class RestaurantSearchViewModel: ObservableObject {
                 size: 15
             )
 
-            restaurants = response.documents.map { place in
-                var restaurant = place.toRestaurant()
-                restaurant = Restaurant(
-                    id: restaurant.id,
-                    name: restaurant.name,
-                    category: restaurant.category,
-                    rating: Double.random(in: 3.5...4.9),
-                    distance: restaurant.distance,
-                    address: restaurant.address,
-                    operatingStatus: restaurant.operatingStatus,
-                    operatingHours: restaurant.operatingHours,
-                    totalMenuCount: restaurant.totalMenuCount,
-                    imageUrl: restaurant.imageUrl,
-                    phoneNumber: restaurant.phoneNumber,
-                    latitude: restaurant.latitude,
-                    longitude: restaurant.longitude
-                )
-                return restaurant
-            }
+            restaurants = response.documents.map { $0.toRestaurant() }
 
             isLoading = false
         } catch {

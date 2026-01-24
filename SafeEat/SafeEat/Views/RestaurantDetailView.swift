@@ -10,6 +10,7 @@ import SwiftUI
 struct RestaurantDetailView: View {
     let restaurant: Restaurant?
     @StateObject private var viewModel: RestaurantDetailViewModel
+    @EnvironmentObject var favoritesViewModel: FavoritesViewModel
 
     init(restaurant: Restaurant? = nil) {
         self.restaurant = restaurant
@@ -22,9 +23,11 @@ struct RestaurantDetailView: View {
             NavigationBar(
                 restaurantName: viewModel.restaurant.name,
                 category: viewModel.restaurant.category,
-                isFavorite: viewModel.isFavorite,
+                isFavorite: favoritesViewModel.isFavorite(restaurantId: viewModel.restaurant.id),
                 phoneNumber: viewModel.restaurant.phoneNumber,
-                onFavoriteToggle: { viewModel.toggleFavorite() }
+                onFavoriteToggle: {
+                    favoritesViewModel.toggleFavorite(restaurant: viewModel.restaurant)
+                }
             )
 
             ScrollView {
@@ -244,7 +247,11 @@ struct OperatingHoursSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Button(action: { isExpanded.toggle() }) {
+            Button(action: {
+                if !hours.isEmpty {
+                    isExpanded.toggle()
+                }
+            }) {
                 HStack(spacing: 8) {
                     Image(systemName: "clock")
                         .font(.system(size: 16))
@@ -256,13 +263,16 @@ struct OperatingHoursSection: View {
 
                     Spacer()
 
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12))
-                        .foregroundColor(.safeEatTextSecondary)
+                    if !hours.isEmpty {
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 12))
+                            .foregroundColor(.safeEatTextSecondary)
+                    }
                 }
             }
+            .disabled(hours.isEmpty)
 
-            if isExpanded {
+            if isExpanded && !hours.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(hours) { dayHours in
                         HStack(alignment: .top, spacing: 8) {
@@ -290,6 +300,11 @@ struct OperatingHoursSection: View {
                     }
                 }
                 .padding(.top, 8)
+            } else if hours.isEmpty {
+                Text("상세 영업시간은 매장에 문의해주세요")
+                    .font(.system(size: 13))
+                    .foregroundColor(.safeEatTextSecondary)
+                    .padding(.top, 4)
             }
         }
     }
@@ -507,5 +522,6 @@ struct ProbabilityTag: View {
 struct RestaurantDetailView_Previews: PreviewProvider {
     static var previews: some View {
         RestaurantDetailView()
+            .environmentObject(FavoritesViewModel())
     }
 }
