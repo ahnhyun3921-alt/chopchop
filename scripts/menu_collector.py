@@ -496,12 +496,14 @@ JSON 형식으로만 응답해주세요:
             menus = []
             for item in data.get("menus", []):
                 if item.get("name") and item.get("price"):
+                    menu_name = item["name"]
                     menu = {
                         "id": str(uuid.uuid4()),
                         "restaurantId": restaurant_id,
-                        "name": item["name"],
+                        "name": menu_name,
                         "price": int(item["price"]),
                         "priceText": format_price(int(item["price"])),
+                        "menuCategory": classify_menu(menu_name),
                         "ingredients": [],
                         "createdAt": datetime.now()
                     }
@@ -555,6 +557,41 @@ def correct_typos(text):
         corrected = corrected.replace(typo, correct)
     return corrected
 
+# ==================== 메뉴 카테고리 분류 ====================
+
+MENU_CATEGORIES = {
+    "밥류": ["밥", "비빔밥", "덮밥", "볶음밥", "김밥", "공기밥", "정식", "백반", "쌈밥"],
+    "면류": ["면", "국수", "칼국수", "냉면", "라면", "라멘", "우동", "파스타", "짜장면", "짬뽕", "쌀국수"],
+    "찌개/탕류": ["찌개", "탕", "전골", "국", "국밥", "설렁탕", "감자탕", "부대찌개", "순두부", "된장"],
+    "고기류": ["고기", "삼겹살", "목살", "갈비", "불고기", "제육", "수육", "보쌈", "족발", "곱창", "막창"],
+    "튀김류": ["튀김", "돈까스", "돈가스", "치킨", "탕수육", "꿔바로우", "텐동"],
+    "분식류": ["떡볶이", "순대", "튀김", "오뎅", "김밥", "라볶이", "만두"],
+    "해물류": ["회", "초밥", "생선", "해물", "새우", "오징어", "조개", "굴", "전복", "랍스터"],
+    "일식": ["스시", "사시미", "롤", "덮밥", "라멘", "우동", "돈부리", "가츠동"],
+    "중식": ["짜장", "짬뽕", "탕수육", "마파두부", "깐풍기", "유린기", "양장피"],
+    "양식": ["스테이크", "파스타", "피자", "리조또", "햄버거", "샐러드", "수프"],
+    "음료/디저트": ["음료", "커피", "차", "주스", "에이드", "스무디", "아이스크림", "케이크", "빵"],
+    "주류": ["소주", "맥주", "막걸리", "사케", "와인", "칵테일"],
+    "사이드": ["공기밥", "계란", "김치", "반찬", "샐러드", "피클"],
+}
+
+# 카테고리 우선순위 (정렬용)
+CATEGORY_ORDER = [
+    "밥류", "면류", "찌개/탕류", "고기류", "튀김류", "분식류",
+    "해물류", "일식", "중식", "양식", "사이드", "음료/디저트", "주류", "기타"
+]
+
+def classify_menu(menu_name):
+    """메뉴명으로 카테고리 분류"""
+    menu_lower = menu_name.lower()
+
+    for category, keywords in MENU_CATEGORIES.items():
+        for keyword in keywords:
+            if keyword in menu_lower:
+                return category
+
+    return "기타"
+
 def parse_menus(text, restaurant_id, restaurant_name="", category=""):
     """추출된 텍스트에서 메뉴 정보 파싱 (개선된 버전)"""
 
@@ -592,6 +629,7 @@ def parse_menus(text, restaurant_id, restaurant_name="", category=""):
                     "name": menu_name,
                     "price": price,
                     "priceText": format_price(price),  # "8,000원" 형식
+                    "menuCategory": classify_menu(menu_name),  # 메뉴 종류
                     "ingredients": ingredients,
                     "createdAt": datetime.now()
                 }
@@ -711,7 +749,7 @@ def normalize_menu_name(name):
     return normalized
 
 def remove_duplicate_menus(menus):
-    """중복 메뉴 제거 + 가격순 정렬"""
+    """중복 메뉴 제거 + 카테고리별/가격순 정렬"""
     seen = {}  # {정규화된이름: 메뉴}
 
     for menu in menus:
@@ -730,8 +768,13 @@ def remove_duplicate_menus(menus):
 
     unique = list(seen.values())
 
-    # 가격순 정렬
-    unique.sort(key=lambda x: x['price'])
+    # 카테고리별 + 가격순 정렬
+    def sort_key(menu):
+        category = menu.get('menuCategory', '기타')
+        category_index = CATEGORY_ORDER.index(category) if category in CATEGORY_ORDER else len(CATEGORY_ORDER)
+        return (category_index, menu['price'])
+
+    unique.sort(key=sort_key)
 
     return unique
 

@@ -93,6 +93,7 @@ def get_all_data(db):
                 'name': m_data.get('name', '-'),
                 'price': m_data.get('price', 0),
                 'priceText': m_data.get('priceText', f"{m_data.get('price', 0):,}원"),
+                'menuCategory': m_data.get('menuCategory', '기타'),
                 'ingredients': ', '.join(m_data.get('ingredients', [])) or '-',
             })
 
@@ -122,29 +123,54 @@ def view_summary(db):
     rows = [[name, f"{count}개"] for name, count in sorted(restaurant_menu_count.items(), key=lambda x: -x[1])]
     print_table(headers, rows, [30, 10])
 
+CATEGORY_ORDER = [
+    "밥류", "면류", "찌개/탕류", "고기류", "튀김류", "분식류",
+    "해물류", "일식", "중식", "양식", "사이드", "음료/디저트", "주류", "기타"
+]
+
 def view_all_menus(db):
-    """모든 메뉴 표 형식으로 보기"""
+    """모든 메뉴 표 형식으로 보기 (카테고리별)"""
     _, menus_data = get_all_data(db)
 
-    print("\n" + "=" * 90)
-    print("📋 전체 메뉴 목록")
-    print("=" * 90)
+    print("\n" + "=" * 100)
+    print("📋 전체 메뉴 목록 (카테고리별)")
+    print("=" * 100)
 
-    # 가격순 정렬
-    menus_data.sort(key=lambda x: x['price'])
-
-    headers = ["식당", "메뉴명", "가격", "재료"]
-    rows = []
+    # 카테고리별로 그룹화
+    by_category = {}
     for menu in menus_data:
-        rows.append([
-            menu['restaurant_name'][:15],
-            menu['name'][:20],
-            menu['priceText'],
-            menu['ingredients'][:25]
-        ])
+        cat = menu.get('menuCategory', '기타')
+        if cat not in by_category:
+            by_category[cat] = []
+        by_category[cat].append(menu)
 
-    print_table(headers, rows, [15, 20, 12, 25])
-    print(f"\n총 {len(menus_data)}개 메뉴")
+    # 카테고리 순서대로 출력
+    total = 0
+    for category in CATEGORY_ORDER:
+        if category not in by_category:
+            continue
+
+        menus = by_category[category]
+        menus.sort(key=lambda x: x['price'])  # 가격순 정렬
+
+        print(f"\n{'─'*50}")
+        print(f"📌 {category} ({len(menus)}개)")
+        print(f"{'─'*50}")
+
+        headers = ["식당", "메뉴명", "가격"]
+        rows = []
+        for menu in menus:
+            rows.append([
+                menu['restaurant_name'][:12],
+                menu['name'][:18],
+                menu['priceText'],
+            ])
+
+        print_table(headers, rows, [12, 18, 12])
+        total += len(menus)
+
+    print(f"\n{'='*50}")
+    print(f"총 {total}개 메뉴")
 
 def search_restaurant(db, keyword):
     """식당 검색"""
