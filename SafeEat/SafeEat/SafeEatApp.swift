@@ -6,23 +6,21 @@
 //
 
 import SwiftUI
+import KakaoMapsSDK_SPM
 // Firebase는 나중에 설치 후 활성화
 // import FirebaseCore
-// KakaoMapsSDK는 SPM 설치 후 활성화
-// import KakaoMapsSDK
 
 @main
 struct SafeEatApp: App {
     @StateObject private var authService = AuthenticationService()
 
-    // Firebase 초기화 (임시 비활성화)
+    // 카카오 지도 SDK 초기화
     init() {
         // Firebase SDK 설치 후 활성화
         // FirebaseApp.configure()
 
-        // 카카오 지도 초기화 (SPM 설치 후 활성화)
-        // SPM으로 https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM 추가 후 활성화
-        // SDKInitializer.InitSDK(appKey: Config.kakaoRestAPIKey)
+        // 카카오 맵 SDK 초기화 (네이티브 앱 키 사용)
+        SDKInitializer.InitSDK(appKey: Config.kakaoNativeAppKey)
     }
 
     var body: some Scene {
