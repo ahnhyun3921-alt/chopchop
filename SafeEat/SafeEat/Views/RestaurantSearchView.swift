@@ -13,7 +13,10 @@ struct RestaurantSearchView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
 
-    let sheetHeight: CGFloat = 500 // 하단 리스트 고정 높이
+    // 화면 높이의 60% 사용
+    var sheetHeight: CGFloat {
+        UIScreen.main.bounds.height * 0.6
+    }
 
     var body: some View {
         ZStack {
@@ -94,14 +97,31 @@ struct RestaurantSearchView: View {
                         .frame(height: sheetHeight)
                     } else if viewModel.restaurants.isEmpty {
                         // 검색 결과 없음 또는 초기 상태
-                        VStack(spacing: 12) {
-                            Image(systemName: viewModel.hasSearched ? "magnifyingglass" : "location.circle")
-                                .font(.system(size: 36))
-                                .foregroundColor(.safeEatTextSecondary)
-                            Text(viewModel.hasSearched ? "검색 결과가 없습니다" : "주변 검색 버튼을 눌러\n가까운 식당을 찾아보세요")
-                                .font(.system(size: 14))
-                                .foregroundColor(.safeEatTextSecondary)
-                                .multilineTextAlignment(.center)
+                        VStack(spacing: 16) {
+                            if locationManager.currentLocation == nil && !viewModel.hasSearched {
+                                // 위치 정보 로딩 중
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .safeEatPrimary))
+                                Text("위치 정보를 불러오는 중...")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.safeEatTextSecondary)
+
+                                if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
+                                    Text("⚠️ 위치 권한이 거부되었습니다\n\n설정 > 개인정보 보호 > 위치 서비스에서\nSafeEat 권한을 허용해주세요")
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.red)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.top, 8)
+                                }
+                            } else {
+                                Image(systemName: viewModel.hasSearched ? "magnifyingglass" : "location.circle")
+                                    .font(.system(size: 36))
+                                    .foregroundColor(.safeEatTextSecondary)
+                                Text(viewModel.hasSearched ? "검색 결과가 없습니다" : "주변 검색 버튼을 눌러\n가까운 식당을 찾아보세요")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.safeEatTextSecondary)
+                                    .multilineTextAlignment(.center)
+                            }
                         }
                         .frame(height: sheetHeight)
                     } else {
