@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
 SafeEat 자동 메뉴 수집 스크립트
-완전 무료 메뉴 데이터 수집 시스템
+완전 무료 메뉴 데이터 수집 시스템 (Apple Vision OCR 사용)
 
 사용 방법:
 1. requirements.txt 설치: pip install -r requirements.txt
-2. Tesseract OCR 설치: brew install tesseract tesseract-lang (macOS)
-3. Firebase 인증 파일 다운로드: firebase-admin-key.json
-4. 실행: python menu_collector.py --location "평촌" --limit 10
+2. Firebase 인증 파일 다운로드: firebase-admin-key.json
+3. 실행: python menu_collector.py --location "평촌" --limit 10
+
+주의: macOS 전용 (Apple Vision 사용)
 """
 
 import os
@@ -16,13 +17,29 @@ import time
 import uuid
 import argparse
 import requests
+import platform
 from io import BytesIO
 from PIL import Image
-import pytesseract
 from googleapiclient.discovery import build
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
+
+# macOS에서만 Apple Vision 사용
+IS_MACOS = platform.system() == 'Darwin'
+
+if IS_MACOS:
+    try:
+        import Vision
+        from Quartz import CIImage
+        from Foundation import NSURL, NSMutableDictionary
+        print("✅ Apple Vision OCR 사용")
+    except ImportError:
+        print("⚠️  pyobjc 미설치. 설치: pip install pyobjc-framework-Vision pyobjc-framework-Quartz")
+        IS_MACOS = False
+else:
+    print("⚠️  macOS가 아니므로 Tesseract 사용")
+    import pytesseract
 
 # ==================== 설정 ====================
 
@@ -110,16 +127,71 @@ def download_image(image_url):
         print(f"  ❌ 이미지 다운로드 실패: {e}")
         return None
 
-# ==================== OCR (Tesseract) ====================
+# ==================== OCR (Apple Vision or Tesseract) ====================
 
 def extract_text_from_image(image):
-    """Tesseract OCR로 이미지에서 텍스트 추출"""
+    """이미지에서 텍스트 추출 (Apple Vision 우선, Tesseract fallback)"""
+    if IS_MACOS:
+        return extract_text_apple_vision(image)
+    else:
+        return extract_text_tesseract(image)
+
+def extract_text_apple_vision(image):
+    """Apple Vision OCR로 이미지에서 텍스트 추출 (macOS 전용, 무료!)"""
+    try:
+        # PIL Image를 임시 파일로 저장
+        temp_path = "/tmp/menu_temp.jpg"
+        image.save(temp_path)
+
+        # 이미지 URL 생성
+        image_url = NSURL.fileURLWithPath_(temp_path)
+
+        # Vision 요청 생성
+        request = Vision.VNRecognizeTextRequest.alloc().init()
+        request.setRecognitionLanguages_(["ko-KR", "en-US"])  # 한글 + 영어
+        request.setRecognitionLevel_(Vision.VNRequestTextRecognitionLevelAccurate)  # 정확도 우선
+        request.setUsesLanguageCorrection_(True)  # 언어 교정 사용
+
+        # 이미지 핸들러 생성
+        ci_image = CIImage.imageWithContentsOfURL_(image_url)
+        handler = Vision.VNImageRequestHandler.alloc().initWithCIImage_options_(ci_image, None)
+
+        # OCR 실행
+        success = handler.performRequests_error_([request], None)
+
+        if not success:
+            print("  ❌ Vision OCR 실패")
+            return ""
+
+        # 결과 추출
+        results = request.results()
+        if not results:
+            return ""
+
+        # 모든 인식된 텍스트를 줄바꿈으로 연결
+        text_lines = []
+        for observation in results:
+            candidates = observation.topCandidates_(1)
+            if candidates and len(candidates) > 0:
+                text_lines.append(candidates[0].string())
+
+        # 임시 파일 삭제
+        os.remove(temp_path)
+
+        return "\n".join(text_lines)
+
+    except Exception as e:
+        print(f"  ❌ Apple Vision OCR 실패: {e}")
+        return ""
+
+def extract_text_tesseract(image):
+    """Tesseract OCR로 이미지에서 텍스트 추출 (fallback)"""
     try:
         # 한글 + 영어 인식
         text = pytesseract.image_to_string(image, lang='kor+eng')
         return text
     except Exception as e:
-        print(f"  ❌ OCR 실패: {e}")
+        print(f"  ❌ Tesseract OCR 실패: {e}")
         return ""
 
 def parse_menus(text, restaurant_id):

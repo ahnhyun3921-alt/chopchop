@@ -3,8 +3,12 @@
 # 이미지 처리
 Pillow>=10.0.0
 
-# OCR (Tesseract)
-pytesseract>=0.3.10
+# Apple Vision OCR (macOS 전용, 무료!)
+pyobjc-framework-Vision>=10.0; sys_platform == 'darwin'
+pyobjc-framework-Quartz>=10.0; sys_platform == 'darwin'
+
+# Tesseract OCR (macOS 아닌 경우 fallback)
+pytesseract>=0.3.10; sys_platform != 'darwin'
 
 # Google API
 google-api-python-client>=2.100.0

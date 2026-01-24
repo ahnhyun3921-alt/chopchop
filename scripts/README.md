@@ -7,7 +7,7 @@
 ```
 1. Kakao Local API로 평촌 지역 식당 검색
 2. Google Image Search로 각 식당의 "메뉴판" 이미지 검색
-3. Tesseract OCR로 메뉴판 이미지에서 텍스트 추출
+3. Apple Vision OCR로 메뉴판 이미지에서 텍스트 추출 (무료!)
 4. 메뉴명, 가격, 재료 파싱
 5. Firebase Firestore에 저장
 6. 이미지 즉시 삭제 (저작권 보호)
@@ -19,31 +19,23 @@
 
 - Kakao Local API: 무료
 - Google Custom Search API: 일 100회 무료
-- Tesseract OCR: 무료 (오픈소스)
+- **Apple Vision OCR: 무료 (macOS 내장, 정확도 95%+)**
 - Firebase Firestore: 무료 할당량 내
 
 ## 📋 필수 요구사항
 
-### 1. Python 3.8 이상
+### 1. macOS (권장)
+
+**Apple Vision OCR이 내장되어 있어 별도 설치 불필요!**
+- 정확도: 95%+ (Tesseract: 70-80%)
+- 한글 인식 우수
+- 완전 무료
+
+### 2. Python 3.8 이상
 
 ```bash
 python3 --version
 ```
-
-### 2. Tesseract OCR 설치
-
-**macOS:**
-```bash
-brew install tesseract tesseract-lang
-```
-
-**Ubuntu/Debian:**
-```bash
-sudo apt-get install tesseract-ocr tesseract-ocr-kor
-```
-
-**Windows:**
-- https://github.com/UB-Mannheim/tesseract/wiki 에서 설치
 
 ### 3. Python 패키지 설치
 
@@ -51,6 +43,9 @@ sudo apt-get install tesseract-ocr tesseract-ocr-kor
 cd scripts
 pip install -r requirements.txt
 ```
+
+**참고:** macOS에서는 자동으로 Apple Vision을 사용합니다.
+다른 OS에서는 Tesseract가 fallback으로 사용됩니다 (별도 설치 필요).
 
 ## 🔧 설정
 
@@ -151,9 +146,10 @@ python menu_collector.py --location "범계" --limit 20
 
 ### 2. OCR 정확도
 
-- Tesseract 정확도: 70-80%
+- **Apple Vision 정확도: 95%+ (macOS)**
+- Tesseract 정확도: 70-80% (다른 OS)
 - 손글씨나 특수 폰트는 인식 어려움
-- 수집 후 수동 검토 권장
+- 수집 후 검토 권장
 
 ### 3. 저작권
 
@@ -168,15 +164,20 @@ python menu_collector.py --location "범계" --limit 20
 
 ## 🔍 트러블슈팅
 
-### Tesseract를 찾을 수 없음
+### pyobjc 설치 오류 (macOS)
 
 ```bash
-# macOS
-brew install tesseract tesseract-lang
+# Xcode Command Line Tools 설치 필요
+xcode-select --install
 
-# Ubuntu
-sudo apt-get install tesseract-ocr tesseract-ocr-kor
+# pyobjc 재설치
+pip install --upgrade pyobjc-framework-Vision pyobjc-framework-Quartz
 ```
+
+### Apple Vision을 찾을 수 없음
+
+- macOS 10.15 (Catalina) 이상 필요
+- `python3 --version`으로 Python이 올바르게 설치되었는지 확인
 
 ### Firebase 인증 오류
 
@@ -194,8 +195,9 @@ Error: Resource has been exhausted (e.g. check quota).
 
 ### 메뉴가 인식 안 됨
 
-- 메뉴판 이미지 품질이 낮거나 손글씨일 경우
-- 다른 식당으로 시도하거나 수동 등록
+- 메뉴판 이미지 품질이 낮을 경우
+- 손글씨 메뉴판 (Apple Vision도 인식 어려움)
+- 다른 식당으로 시도하거나 앱에서 수동 등록
 
 ## 📊 데이터 구조
 
