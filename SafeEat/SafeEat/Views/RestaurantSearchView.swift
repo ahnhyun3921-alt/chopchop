@@ -12,11 +12,8 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
-    @State private var sheetHeight: CGFloat = 600 // 하단 시트 높이 (기본값 최대로 설정)
-    @State private var isDragging = false
 
-    let minSheetHeight: CGFloat = 200
-    let maxSheetHeight: CGFloat = 600
+    let sheetHeight: CGFloat = 500 // 하단 리스트 고정 높이
 
     var body: some View {
         ZStack {
@@ -72,15 +69,8 @@ struct RestaurantSearchView: View {
 
                 Spacer()
 
-                // 하단 리스트 시트
+                // 하단 리스트 (고정)
                 VStack(spacing: 0) {
-                    // 드래그 핸들
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 40, height: 5)
-                        .padding(.top, 12)
-                        .padding(.bottom, 8)
-
                     // 로딩 또는 에러 상태
                     if viewModel.isLoading {
                         VStack {
@@ -89,7 +79,7 @@ struct RestaurantSearchView: View {
                                 .padding(.top, 40)
                             Spacer()
                         }
-                        .frame(height: sheetHeight - 25)
+                        .frame(height: sheetHeight)
                     } else if let error = viewModel.errorMessage {
                         VStack(spacing: 12) {
                             Image(systemName: "exclamationmark.triangle")
@@ -101,7 +91,7 @@ struct RestaurantSearchView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
                         }
-                        .frame(height: sheetHeight - 25)
+                        .frame(height: sheetHeight)
                     } else if viewModel.restaurants.isEmpty {
                         // 검색 결과 없음 또는 초기 상태
                         VStack(spacing: 12) {
@@ -113,7 +103,7 @@ struct RestaurantSearchView: View {
                                 .foregroundColor(.safeEatTextSecondary)
                                 .multilineTextAlignment(.center)
                         }
-                        .frame(height: sheetHeight - 25)
+                        .frame(height: sheetHeight)
                     } else {
                         // 리스트
                         ScrollView {
@@ -132,33 +122,15 @@ struct RestaurantSearchView: View {
                                         .background(Color(hex: "#EEEEEE"))
                                 }
                             }
+                            .padding(.top, 12)
                         }
-                        .frame(height: sheetHeight - 25)
+                        .frame(height: sheetHeight)
                     }
                 }
                 .frame(height: sheetHeight)
                 .background(Color.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            isDragging = true
-                            let newHeight = sheetHeight - value.translation.height
-                            sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
-                        }
-                        .onEnded { _ in
-                            isDragging = false
-                            // 스냅 효과
-                            withAnimation(.spring()) {
-                                if sheetHeight < (minSheetHeight + maxSheetHeight) / 2 {
-                                    sheetHeight = minSheetHeight
-                                } else {
-                                    sheetHeight = maxSheetHeight
-                                }
-                            }
-                        }
-                )
             }
         }
         .navigationBarHidden(true)
