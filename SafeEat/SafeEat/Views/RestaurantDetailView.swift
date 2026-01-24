@@ -137,8 +137,8 @@ struct LocationSection: View {
     var body: some View {
         HStack(spacing: 12) {
             // 위치 아이콘
-            Image(systemName: "mappin.circle")
-                .font(.system(size: 20))
+            Image(systemName: "location.fill")
+                .font(.system(size: 18))
                 .foregroundColor(.safeEatTextSecondary)
 
             // 평점 뱃지
@@ -257,23 +257,15 @@ struct MenuSection: View {
                 .foregroundColor(.safeEatTextSecondary)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-                .background(Color(hex: "F9F9F9"))
+                .background(Color.white)
 
             // 안전한 메뉴 탭 내용
             if viewModel.selectedMenuTab == .safe {
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     ForEach(viewModel.safeMenuInfos) { safeMenuInfo in
-                        PersonSafeMenuSection(
-                            safeMenuInfo: safeMenuInfo,
-                            isExpanded: viewModel.isPersonMenuExpanded(personId: safeMenuInfo.person.id),
-                            onToggle: {
-                                viewModel.togglePersonMenuExpansion(personId: safeMenuInfo.person.id)
-                            }
-                        )
+                        PersonSafeMenuSection(safeMenuInfo: safeMenuInfo)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
                 .padding(.bottom, 32)
             }
         }
@@ -337,38 +329,40 @@ struct TabButton: View {
 // MARK: - Person Safe Menu Section
 struct PersonSafeMenuSection: View {
     let safeMenuInfo: SafeMenuInfo
-    let isExpanded: Bool
-    let onToggle: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
+            // 위쪽 구분선
+            Divider()
+                .background(Color(hex: "EEEEEE"))
+
             // 헤더
-            Button(action: onToggle) {
-                HStack {
-                    Text("\(safeMenuInfo.person.name) 님에게 안전한 메뉴")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.safeEatPrimary)
+            HStack {
+                Text("\(safeMenuInfo.person.name) 님에게 안전한 메뉴")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.safeEatPrimary)
 
-                    Spacer()
+                Spacer()
 
-                    Text("총 \(safeMenuInfo.safeMenuCount)개")
-                        .font(.system(size: 12))
-                        .foregroundColor(.safeEatTextSecondary)
-
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11))
-                        .foregroundColor(.safeEatTextSecondary)
-                }
+                Text("총 \(safeMenuInfo.safeMenuCount)개")
+                    .font(.system(size: 12))
+                    .foregroundColor(.safeEatTextSecondary)
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
 
             // 메뉴 리스트
-            if isExpanded {
-                VStack(spacing: 20) {
-                    ForEach(safeMenuInfo.safeMenus) { menu in
-                        MenuCard(menu: menu)
-                    }
+            VStack(spacing: 20) {
+                ForEach(safeMenuInfo.safeMenus) { menu in
+                    MenuCard(menu: menu)
+                        .padding(.horizontal, 20)
                 }
             }
+            .padding(.bottom, 20)
+
+            // 아래쪽 구분선
+            Divider()
+                .background(Color(hex: "EEEEEE"))
         }
     }
 }
@@ -400,17 +394,19 @@ struct MenuCard: View {
                     .font(.system(size: 14))
                     .foregroundColor(.safeEatTextPrimary)
 
-                // 확률 태그들
+                // 확률 태그들 - 가로 스크롤
                 if !menu.probabilityTags.isEmpty {
-                    FlowLayout(spacing: 6) {
-                        ForEach(menu.probabilityTags, id: \.self) { tag in
-                            ProbabilityTag(text: tag)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(menu.probabilityTags, id: \.self) { tag in
+                                ProbabilityTag(text: tag)
+                            }
                         }
                     }
                 }
             }
 
-            Spacer()
+            Spacer(minLength: 0)
         }
     }
 }
