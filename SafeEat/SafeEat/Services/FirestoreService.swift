@@ -53,26 +53,55 @@ class FirestoreService {
 
     /// 사용자의 인물 추가
     func addPerson(userId: String, person: Person) async throws {
-        // Firebase 설치 전 임시 구현 - 로컬에만 저장
+        // Firebase 설치 전 임시 구현 - UserDefaults에 JSON으로 저장
+        var persons = try await getPersons(userId: userId)
+        persons.append(person)
+
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(persons) {
+            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
+        }
         // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 
     /// 사용자의 인물 목록 가져오기
     func getPersons(userId: String) async throws -> [Person] {
-        // Firebase 설치 전 임시 구현 - 빈 배열 반환
+        // Firebase 설치 전 임시 구현 - UserDefaults에서 JSON 디코딩
+        if let data = UserDefaults.standard.data(forKey: "persons_\(userId)") {
+            let decoder = JSONDecoder()
+            if let persons = try? decoder.decode([Person].self, from: data) {
+                return persons
+            }
+        }
         // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
         return []
     }
 
     /// 사용자의 인물 삭제
     func deletePerson(userId: String, personId: String) async throws {
-        // Firebase 설치 전 임시 구현
+        // Firebase 설치 전 임시 구현 - UserDefaults에서 삭제
+        var persons = try await getPersons(userId: userId)
+        persons.removeAll { $0.id == personId }
+
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(persons) {
+            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
+        }
         // TODO: Firebase 설치 후 Firestore에서 삭제하도록 변경
     }
 
     /// 사용자의 인물 업데이트
     func updatePerson(userId: String, person: Person) async throws {
-        // Firebase 설치 전 임시 구현
+        // Firebase 설치 전 임시 구현 - UserDefaults에서 업데이트
+        var persons = try await getPersons(userId: userId)
+        if let index = persons.firstIndex(where: { $0.id == person.id }) {
+            persons[index] = person
+        }
+
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(persons) {
+            UserDefaults.standard.set(encoded, forKey: "persons_\(userId)")
+        }
         // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 

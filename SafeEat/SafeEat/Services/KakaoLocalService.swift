@@ -175,7 +175,9 @@ struct KakaoPlace: Codable, Identifiable {
             operatingHours: [],  // TODO: 영업시간 정보는 Kakao Place Detail API 필요
             totalMenuCount: 0,
             imageUrl: nil,  // TODO: 이미지는 별도 API 또는 크롤링 필요
-            phoneNumber: phone.isEmpty ? nil : phone  // 전화번호 추가
+            phoneNumber: phone.isEmpty ? nil : phone,  // 전화번호
+            latitude: Double(y),  // 위도
+            longitude: Double(x)  // 경도
         )
     }
 }

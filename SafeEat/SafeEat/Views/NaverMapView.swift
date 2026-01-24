@@ -80,18 +80,10 @@ struct NaverMapView: UIViewRepresentable {
         Coordinator(self)
     }
 
-    // 식당 위치 정보 가져오기 (임시)
+    // 식당 위치 정보 가져오기
     private func getRestaurantLocation(_ restaurant: Restaurant) -> CLLocationCoordinate2D? {
-        // TODO: 실제로는 Geocoding API를 사용하여 주소를 좌표로 변환해야 함
-        // 임시로 서울 중심부 근처 랜덤 좌표 사용
-        let baseLatitude = 37.5665
-        let baseLongitude = 126.9780
-
-        let randomOffset = 0.01
-        let latitude = baseLatitude + Double.random(in: -randomOffset...randomOffset)
-        let longitude = baseLongitude + Double.random(in: -randomOffset...randomOffset)
-
-        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        // Restaurant 모델에 저장된 실제 좌표 사용 (Kakao API에서 제공)
+        return restaurant.coordinate
     }
 
     class Coordinator: NSObject, NMFMapViewTouchDelegate {

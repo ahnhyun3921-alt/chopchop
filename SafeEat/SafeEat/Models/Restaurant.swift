@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Restaurant: Identifiable, Codable {
     let id: String
@@ -19,6 +20,14 @@ struct Restaurant: Identifiable, Codable {
     let totalMenuCount: Int
     let imageUrl: String?
     let phoneNumber: String?  // 전화번호 추가
+    let latitude: Double?  // 위도
+    let longitude: Double?  // 경도
+
+    // CLLocationCoordinate2D로 변환
+    var coordinate: CLLocationCoordinate2D? {
+        guard let lat = latitude, let lon = longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    }
 
     static let sample = Restaurant(
         id: "1",
@@ -39,7 +48,9 @@ struct Restaurant: Identifiable, Codable {
         ],
         totalMenuCount: 33,
         imageUrl: nil,
-        phoneNumber: "02-1234-5678"
+        phoneNumber: "02-1234-5678",
+        latitude: 37.5836,  // 고려대 근처
+        longitude: 127.0587
     )
 }
 
@@ -83,7 +94,7 @@ struct Menu: Identifiable {
     let probabilityTags: [String]  // 추가: 확률 태그들
 }
 
-struct Person: Identifiable {
+struct Person: Identifiable, Codable {
     let id: String
     let name: String
     let restrictedIngredients: [String]

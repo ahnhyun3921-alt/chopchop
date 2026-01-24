@@ -309,7 +309,9 @@ class RestaurantSearchViewModel: ObservableObject {
                     operatingHours: restaurant.operatingHours,
                     totalMenuCount: restaurant.totalMenuCount,
                     imageUrl: restaurant.imageUrl,
-                    phoneNumber: restaurant.phoneNumber
+                    phoneNumber: restaurant.phoneNumber,
+                    latitude: restaurant.latitude,
+                    longitude: restaurant.longitude
                 )
 
                 return restaurant
@@ -356,7 +358,9 @@ class RestaurantSearchViewModel: ObservableObject {
                     operatingHours: restaurant.operatingHours,
                     totalMenuCount: restaurant.totalMenuCount,
                     imageUrl: restaurant.imageUrl,
-                    phoneNumber: restaurant.phoneNumber
+                    phoneNumber: restaurant.phoneNumber,
+                    latitude: restaurant.latitude,
+                    longitude: restaurant.longitude
                 )
 
                 return restaurant
