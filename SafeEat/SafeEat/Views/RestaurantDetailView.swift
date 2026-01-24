@@ -450,13 +450,37 @@ struct ProbabilityTag: View {
     let text: String
 
     var body: some View {
-        Text(text)
-            .font(.system(size: 11))
+        Text(attributedText)
             .foregroundColor(.safeEatPrimary)
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(Color.safeEatPrimary.opacity(0.1))
             .cornerRadius(12)
+    }
+
+    private var attributedText: AttributedString {
+        var result = AttributedString(text)
+
+        // "우유", "쇠고기", "돼지", "새우" 등 물질명을 찾아서 medium으로 변경
+        let ingredients = ["우유", "쇠고기", "돼지", "새우", "달걀", "갑각류", "조개", "쇠고기", "닭고기", "땅콩", "밀", "대두", "고등어", "게", "새우", "돼지고기", "복숭아", "토마토", "아황산류"]
+
+        for ingredient in ingredients {
+            if let range = result.range(of: ingredient) {
+                result[range].font = .system(size: 11, weight: .medium)
+            } else {
+                // 나머지는 regular
+                if result.font == nil {
+                    result.font = .system(size: 11, weight: .regular)
+                }
+            }
+        }
+
+        // 기본 폰트 설정
+        if result.runs.allSatisfy({ $0.font == nil }) {
+            result.font = .system(size: 11, weight: .regular)
+        }
+
+        return result
     }
 }
 
