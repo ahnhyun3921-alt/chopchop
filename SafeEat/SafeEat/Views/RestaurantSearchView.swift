@@ -169,22 +169,17 @@ struct RestaurantSearchView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 ForEach(viewModel.restaurants) { restaurant in
-                                    ZStack {
-                                        // 배경에 숨겨진 NavigationLink
-                                        NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                                            EmptyView()
-                                        }
-                                        .opacity(0)
-
-                                        // 실제 표시되는 카드
+                                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
                                         RestaurantSearchCard(restaurant: restaurant)
-                                            .contentShape(Rectangle())
-                                            .onTapGesture {
-                                                // 지도 중심 이동만 (NavigationLink는 자동으로 작동)
-                                                viewModel.selectedRestaurant = restaurant
-                                                viewModel.mapCenter = restaurant.coordinate
-                                            }
                                     }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(
+                                        TapGesture().onEnded {
+                                            // 지도 중심 이동
+                                            viewModel.selectedRestaurant = restaurant
+                                            viewModel.mapCenter = restaurant.coordinate
+                                        }
+                                    )
 
                                     Divider()
                                         .background(Color(hex: "#EEEEEE"))
