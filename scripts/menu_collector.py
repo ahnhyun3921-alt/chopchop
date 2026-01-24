@@ -18,6 +18,7 @@ import os
 import re
 import time
 import uuid
+import json
 import argparse
 import requests
 import platform
@@ -31,6 +32,13 @@ import urllib3
 
 # SSL 경고 숨기기
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Claude API (선택적)
+try:
+    import anthropic
+    CLAUDE_AVAILABLE = True
+except ImportError:
+    CLAUDE_AVAILABLE = False
 
 # ==================== 전역 설정 ====================
 DEBUG_MODE = False
@@ -67,6 +75,12 @@ KAKAO_API_KEY = os.environ.get("KAKAO_API_KEY", "076dadf5b4de23d8c6ce0340ecfa920
 # 네이버 검색 API 키 (https://developers.naver.com/)
 NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "5mtTvlnrdwnNfvsAUziZ")
 NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "zynF6nUH11")
+
+# Claude API 키 (AI 메뉴 보정용, 선택적)
+CLAUDE_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+
+# AI 파싱 사용 여부
+USE_AI_PARSING = False  # --ai 옵션으로 활성화
 
 # Firebase Admin SDK 인증 파일 경로
 FIREBASE_CRED_PATH = "firebase-admin-key.json"
@@ -440,8 +454,119 @@ def extract_menu_name(line, price_text=None):
 
     return menu_name
 
-def parse_menus(text, restaurant_id):
+# ==================== AI 메뉴 파싱 (Claude API) ====================
+
+def parse_menus_with_ai(text, restaurant_id, restaurant_name="", category=""):
+    """Claude API로 OCR 텍스트에서 메뉴 추출 (더 정확함)"""
+    if not CLAUDE_AVAILABLE or not CLAUDE_API_KEY:
+        debug_log("Claude API 사용 불가, 기본 파싱 사용")
+        return None
+
+    try:
+        client = anthropic.Anthropic(api_key=CLAUDE_API_KEY)
+
+        prompt = f"""다음은 '{restaurant_name}' ({category}) 식당의 메뉴판 OCR 텍스트입니다.
+이 텍스트에서 메뉴명과 가격을 추출해주세요.
+
+OCR 텍스트:
+{text}
+
+규칙:
+1. OCR 오타를 보정해주세요 (예: "김치찌게" → "김치찌개", "볶읍밥" → "볶음밥")
+2. 메뉴명에서 가격, 숫자, 특수문자를 제거해주세요
+3. 가격은 숫자만 (예: 8000)
+4. 명확한 메뉴-가격 쌍만 추출하세요
+5. 식당 카테고리({category})에 맞지 않는 메뉴는 제외하세요
+
+JSON 형식으로만 응답해주세요:
+{{"menus": [{{"name": "메뉴명", "price": 가격숫자}}]}}"""
+
+        response = client.messages.create(
+            model="claude-3-haiku-20240307",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        # JSON 파싱
+        response_text = response.content[0].text
+        # JSON 부분만 추출
+        json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+        if json_match:
+            data = json.loads(json_match.group())
+            menus = []
+            for item in data.get("menus", []):
+                if item.get("name") and item.get("price"):
+                    menu = {
+                        "id": str(uuid.uuid4()),
+                        "restaurantId": restaurant_id,
+                        "name": item["name"],
+                        "price": int(item["price"]),
+                        "priceText": format_price(int(item["price"])),
+                        "ingredients": [],
+                        "createdAt": datetime.now()
+                    }
+                    menus.append(menu)
+            debug_log(f"AI 파싱 결과: {len(menus)}개 메뉴")
+            return menus
+
+    except Exception as e:
+        debug_log(f"AI 파싱 실패: {e}")
+
+    return None
+
+# ==================== 오타 교정 사전 ====================
+
+TYPO_CORRECTIONS = {
+    # 찌개류
+    "찌게": "찌개", "찌게": "찌개", "찌깨": "찌개",
+    "김치찌게": "김치찌개", "된장찌게": "된장찌개", "순두부찌게": "순두부찌개",
+    # 볶음류
+    "볶읍": "볶음", "뽁음": "볶음", "볶옴": "볶음",
+    "제육볶읍": "제육볶음", "오징어볶읍": "오징어볶음",
+    # 밥류
+    "비빔밥": "비빔밥", "볶읍밥": "볶음밥", "덮밥": "덮밥",
+    # 면류
+    "짜장": "짜장", "짬뽕": "짬뽕", "우동": "우동",
+    "칼국수": "칼국수", "칼국숫": "칼국수", "칼굿수": "칼국수",
+    # 고기류
+    "삼겹살": "삼겹살", "삼겹": "삼겹살", "목살": "목살",
+    "갈비": "갈비", "갈비살": "갈비살",
+    # 탕/국류
+    "설렁탕": "설렁탕", "설렁탕": "설렁탕", "설농탕": "설렁탕",
+    "감자탕": "감자탕", "뼈해장국": "뼈해장국",
+    "국밥": "국밥", "국밥": "국밥",
+    # 일식
+    "돈까스": "돈까스", "돈가스": "돈까스", "톤까스": "돈까스",
+    "우동": "우동", "라멘": "라멘", "라면": "라면",
+    # 중식
+    "짜장면": "짜장면", "자장면": "짜장면",
+    "짬뽕": "짬뽕", "짬봉": "짬뽕",
+    "탕수육": "탕수육", "탕슈육": "탕수육",
+    # 기타
+    "비빔냉면": "비빔냉면", "물냉면": "물냉면",
+    "공기밥": "공기밥", "공기밥": "공기밥",
+    "계란": "계란", "게란": "계란",
+}
+
+def correct_typos(text):
+    """오타 교정"""
+    corrected = text
+    for typo, correct in TYPO_CORRECTIONS.items():
+        corrected = corrected.replace(typo, correct)
+    return corrected
+
+def parse_menus(text, restaurant_id, restaurant_name="", category=""):
     """추출된 텍스트에서 메뉴 정보 파싱 (개선된 버전)"""
+
+    # AI 파싱 사용 (옵션)
+    if USE_AI_PARSING:
+        ai_result = parse_menus_with_ai(text, restaurant_id, restaurant_name, category)
+        if ai_result:
+            return ai_result
+
+    # 오타 교정
+    text = correct_typos(text)
+
     menus = []
     lines = [line.strip() for line in text.split('\n') if line.strip()]
 
@@ -536,8 +661,8 @@ def auto_collect_menus(restaurant, location, db, dry_run=False):
             print("    ⚠️  텍스트 추출 실패")
             continue
 
-        # 메뉴 파싱
-        menus = parse_menus(text, restaurant['id'])
+        # 메뉴 파싱 (식당 정보 전달)
+        menus = parse_menus(text, restaurant['id'], restaurant['name'], restaurant.get('category', ''))
         if menus:
             print(f"    ✅ {len(menus)}개 메뉴 발견")
             for menu in menus[:5]:  # 처음 5개만 미리보기
@@ -669,9 +794,13 @@ def main():
     parser.add_argument('--limit', type=int, default=10, help='수집할 식당 수 (기본: 10)')
     parser.add_argument('--debug', action='store_true', help='디버그 모드 (상세 로그 출력)')
     parser.add_argument('--dry-run', action='store_true', help='테스트 모드 (Firebase 저장 안 함)')
+    parser.add_argument('--ai', action='store_true', help='AI 메뉴 파싱 사용 (Claude API, 유료)')
     args = parser.parse_args()
 
     DEBUG_MODE = args.debug
+
+    global USE_AI_PARSING
+    USE_AI_PARSING = args.ai
 
     print("=" * 60)
     print("🍽️  SafeEat 자동 메뉴 수집 시스템")
@@ -682,6 +811,11 @@ def main():
         print("🐛 디버그 모드: ON")
     if args.dry_run:
         print("🧪 테스트 모드: ON (저장 안 함)")
+    if args.ai:
+        if CLAUDE_AVAILABLE and CLAUDE_API_KEY:
+            print("🤖 AI 파싱 모드: ON (Claude API)")
+        else:
+            print("⚠️  AI 파싱 불가 (anthropic 패키지 또는 API 키 없음)")
     print()
 
     # Firebase 초기화
