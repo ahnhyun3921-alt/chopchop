@@ -6,9 +6,17 @@
 //
 
 import Foundation
-import FirebaseAuth
+// Firebase는 나중에 설치 후 활성화
+// import FirebaseAuth
 import AuthenticationServices
 import CryptoKit
+
+// 임시 User 타입 정의 (Firebase 설치 전)
+struct User {
+    let uid: String
+    let email: String?
+    let displayName: String?
+}
 
 @MainActor
 class AuthenticationService: ObservableObject {
@@ -18,18 +26,20 @@ class AuthenticationService: ObservableObject {
     private var currentNonce: String?
 
     init() {
-        // 현재 로그인 상태 확인
-        self.user = Auth.auth().currentUser
-        self.isAuthenticated = user != nil
+        // Firebase 설치 전 임시 상태
+        self.user = nil
+        self.isAuthenticated = false
 
-        // 인증 상태 변경 리스너
-        Auth.auth().addStateDidChangeListener { [weak self] _, user in
-            self?.user = user
-            self?.isAuthenticated = user != nil
-        }
+        // Firebase 설치 후 활성화:
+        // self.user = Auth.auth().currentUser
+        // self.isAuthenticated = user != nil
+        // Auth.auth().addStateDidChangeListener { [weak self] _, user in
+        //     self?.user = user
+        //     self?.isAuthenticated = user != nil
+        // }
     }
 
-    // Apple Sign In 시작
+    // Apple Sign In 시작 (Firebase 설치 후 활성화)
     func startSignInWithAppleFlow() -> ASAuthorizationAppleIDRequest {
         let nonce = randomNonceString()
         currentNonce = nonce
@@ -42,8 +52,12 @@ class AuthenticationService: ObservableObject {
         return request
     }
 
-    // Apple Sign In 완료 처리
+    // Apple Sign In 완료 처리 (Firebase 설치 후 활성화)
     func handleSignInWithAppleCompletion(_ authorization: ASAuthorization) async throws {
+        // Firebase 설치 후 구현
+        throw AuthenticationError.invalidCredential
+
+        /* Firebase 설치 후 활성화:
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
               let nonce = currentNonce,
               let appleIDToken = appleIDCredential.identityToken,
@@ -61,7 +75,6 @@ class AuthenticationService: ObservableObject {
         self.user = result.user
         self.isAuthenticated = true
 
-        // 사용자 프로필 업데이트 (첫 로그인 시)
         if let fullName = appleIDCredential.fullName {
             let changeRequest = result.user.createProfileChangeRequest()
             let displayName = [fullName.givenName, fullName.familyName]
@@ -72,11 +85,13 @@ class AuthenticationService: ObservableObject {
             }
             try await changeRequest.commitChanges()
         }
+        */
     }
 
-    // 로그아웃
+    // 로그아웃 (Firebase 설치 후 활성화)
     func signOut() throws {
-        try Auth.auth().signOut()
+        // Firebase 설치 후 구현
+        // try Auth.auth().signOut()
         self.user = nil
         self.isAuthenticated = false
     }
