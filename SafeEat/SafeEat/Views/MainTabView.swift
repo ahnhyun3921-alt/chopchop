@@ -11,6 +11,16 @@ struct MainTabView: View {
     @State private var selectedTab = 0
     @StateObject private var favoritesViewModel = FavoritesViewModel()
 
+    init() {
+        // 탭바 배경색을 흰색으로 설정
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
     var body: some View {
         TabView(selection: $selectedTab) {
             // 홈 (검색)

@@ -103,14 +103,15 @@ struct RestaurantSearchView: View {
                         }
                         .frame(height: sheetHeight - 25)
                     } else if viewModel.restaurants.isEmpty {
-                        // 검색 결과 없음
+                        // 검색 결과 없음 또는 초기 상태
                         VStack(spacing: 12) {
-                            Image(systemName: "magnifyingglass")
+                            Image(systemName: viewModel.hasSearched ? "magnifyingglass" : "location.circle")
                                 .font(.system(size: 36))
                                 .foregroundColor(.safeEatTextSecondary)
-                            Text("검색 결과가 없습니다")
+                            Text(viewModel.hasSearched ? "검색 결과가 없습니다" : "주변 검색 버튼을 눌러\n가까운 식당을 찾아보세요")
                                 .font(.system(size: 14))
                                 .foregroundColor(.safeEatTextSecondary)
+                                .multilineTextAlignment(.center)
                         }
                         .frame(height: sheetHeight - 25)
                     } else {
@@ -163,12 +164,13 @@ struct RestaurantSearchView: View {
         .navigationBarHidden(true)
         .onAppear {
             locationManager.requestLocation()
-
-            // 초기 검색 (주변 맛집)
-            Task {
-                await viewModel.searchNearbyRestaurants(
-                    location: locationManager.currentLocation
-                )
+        }
+        .onChange(of: locationManager.currentLocation) { newLocation in
+            // 위치를 처음 받았을 때만 자동으로 주변 검색
+            if newLocation != nil && viewModel.restaurants.isEmpty && !viewModel.hasSearched {
+                Task {
+                    await viewModel.searchNearbyRestaurants(location: newLocation)
+                }
             }
         }
     }
@@ -289,6 +291,7 @@ class RestaurantSearchViewModel: ObservableObject {
     @Published var mapCenter: CLLocationCoordinate2D?
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var hasSearched = false
 
     private let kakaoService = KakaoLocalService.shared
 
@@ -297,6 +300,7 @@ class RestaurantSearchViewModel: ObservableObject {
 
         isLoading = true
         errorMessage = nil
+        hasSearched = true
 
         do {
             let response = try await kakaoService.searchKeyword(
@@ -315,7 +319,7 @@ class RestaurantSearchViewModel: ObservableObject {
 
             isLoading = false
         } catch {
-            errorMessage = "검색 중 오류가 발생했습니다: HTTP 오류: 403"
+            errorMessage = "검색 중 오류가 발생했습니다: \(error.localizedDescription)"
             isLoading = false
         }
     }
@@ -328,6 +332,7 @@ class RestaurantSearchViewModel: ObservableObject {
 
         isLoading = true
         errorMessage = nil
+        hasSearched = true
         mapCenter = location
 
         do {
@@ -342,7 +347,7 @@ class RestaurantSearchViewModel: ObservableObject {
 
             isLoading = false
         } catch {
-            errorMessage = "주변 검색 중 오류가 발생했습니다: HTTP 오류: 403"
+            errorMessage = "주변 검색 중 오류가 발생했습니다: \(error.localizedDescription)"
             isLoading = false
         }
     }
