@@ -119,8 +119,7 @@ struct RestaurantSearchView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
-            locationManager.requestPermission()
-            locationManager.startUpdatingLocation()
+            locationManager.requestLocation()
 
             // 초기 검색 (주변 맛집)
             Task {
