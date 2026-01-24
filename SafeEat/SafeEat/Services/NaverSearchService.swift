@@ -152,8 +152,8 @@ struct NaverPlace: Codable, Identifiable {
             totalMenuCount: 0,  // TODO: 메뉴 정보 가져오기
             imageUrl: nil,  // TODO: 이미지 URL 가져오기
             phoneNumber: telephone.isEmpty ? nil : telephone,
-            latitude: coordinate.latitude,
-            longitude: coordinate.longitude
+            latitude: coordinate?.latitude,
+            longitude: coordinate?.longitude
         )
     }
 
