@@ -7,52 +7,58 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B6D0F2B2BF344D56B1A8215C /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */; };
-
-		ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */; };
-
-		EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */; };
-
-		8F9A6577966C4241819A0670 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */; };
-
-		05F94212609C4438AC4BC753 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */; };
-		A020C347BC0D4AEABB8F0533 /* ClaudeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D21435472F41518A1C2288 /* ClaudeAPIService.swift */; };
-		2FB33C9AC0F44B88B9840EC4 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7877030BE1F41DEBDE9243A /* Config.swift */; };
-		2C682AFB41334155B58D90D2 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4664B36D2B8241E592AD83C8 /* FirestoreService.swift */; };
-		17B8C164960F471ABD29C7A1 /* MenuAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */; };
-		842D2374319C4ABEA8E05188 /* NaverSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */; };
-		SafeEatApp_Swift /* SafeEatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = SafeEatApp /* SafeEatApp.swift */; };
-		RestaurantDetailView_Swift /* RestaurantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = RestaurantDetailView /* RestaurantDetailView.swift */; };
-		Restaurant_Swift /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = Restaurant /* Restaurant.swift */; };
-		RestaurantDetailViewModel_Swift /* RestaurantDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = RestaurantDetailViewModel /* RestaurantDetailViewModel.swift */; };
-		ColorExtension_Swift /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ColorExtension /* ColorExtension.swift */; };
+		D5BBBC640FA7412B9CBF64CB /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0DB1156E5E4A92A8CE4A93 /* Restaurant.swift */; };
+		46D6504727C74E80956A34C9 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998E3B49765E4701B27CD6FE /* FavoritesView.swift */; };
+		D089B9FEB6764622AA93DEE8 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */; };
+		56E4F0DCB9AA4073A8092912 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */; };
+		54249B866667458FA73613B0 /* NaverMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A778A9A238D54C7595930AFB /* NaverMapView.swift */; };
+		F6041FE904E2408FB81B9892 /* PersonManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B105939B38A4962BAD45BFD /* PersonManagementView.swift */; };
+		B00874356CA849C9BA4C8C78 /* RestaurantDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */; };
+		3EDDB32726944B62AE0F3FB9 /* RestaurantSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */; };
+		0F9A670D7ABC476B98C50B87 /* SignInWithAppleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950F2A2CB6034F5FBDF47E7F /* SignInWithAppleButton.swift */; };
+		DA1E34EC6CE8445B9DD60D28 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF7476C1994D8FB33EAD45 /* FavoritesViewModel.swift */; };
+		C5662E5F89D84242A7B64922 /* PersonManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538E7EB9AAFC414299FA3B38 /* PersonManagementViewModel.swift */; };
+		D5806DB121754C40AFA9EE7A /* RestaurantDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8109A99ECBEE4A249DA59300 /* RestaurantDetailViewModel.swift */; };
+		7A98F5264B584DA4AE7D7A45 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C73D191D6AB43129DCC9E3B /* AuthenticationService.swift */; };
+		94B05518DFDA4E58AB3F901F /* ClaudeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D64EBDA3914399AD45D9AB /* ClaudeAPIService.swift */; };
+		6EA08FFD4ED94C57B3B1031A /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD7404D1744CACB48C1916 /* Config.swift */; };
+		95ABA0DBB7B1497083BB6032 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F5C5D9FE6E44AF8F2069BB /* FirestoreService.swift */; };
+		E60FDF514D2F4565BF63A2AD /* KakaoLocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 612019E94B7B40DDAE5C65C0 /* KakaoLocalService.swift */; };
+		FEC4581698B745C292C161F1 /* MenuAnalysisService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2897F596BF7945B7BC86133E /* MenuAnalysisService.swift */; };
+		4CFC0D6D79844D6796685957 /* NaverSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3697FED8DB734520BA2A3E82 /* NaverSearchService.swift */; };
+		B343D73A84E8435CB7D68259 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DADE9B498634CB3B2987CEC /* ColorExtension.swift */; };
+		E491BF45AE5445E9A48A456E /* SafeEatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3C5C2893B4D80AE2AB9A2 /* SafeEatApp.swift */; };
+		712CFD4B312047E48B9A5547 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72D34F8A44B54455B1C16EE4 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
-
-		0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoLocalService.swift; sourceTree = "<group>"; };
-
-		765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
-
-		6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
-
-		C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
-		58D21435472F41518A1C2288 /* ClaudeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIService.swift; sourceTree = "<group>"; };
-		C7877030BE1F41DEBDE9243A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		4664B36D2B8241E592AD83C8 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
-		6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAnalysisService.swift; sourceTree = "<group>"; };
-		64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverSearchService.swift; sourceTree = "<group>"; };
-		SafeEat_App /* SafeEat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeEat.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		SafeEatApp /* SafeEatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeEatApp.swift; sourceTree = "<group>"; };
-		RestaurantDetailView /* RestaurantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailView.swift; sourceTree = "<group>"; };
-		Restaurant /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
-		RestaurantDetailViewModel /* RestaurantDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailViewModel.swift; sourceTree = "<group>"; };
-		ColorExtension /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		7C0DB1156E5E4A92A8CE4A93 /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
+		998E3B49765E4701B27CD6FE /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		A778A9A238D54C7595930AFB /* NaverMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverMapView.swift; sourceTree = "<group>"; };
+		8B105939B38A4962BAD45BFD /* PersonManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonManagementView.swift; sourceTree = "<group>"; };
+		DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailView.swift; sourceTree = "<group>"; };
+		C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantSearchView.swift; sourceTree = "<group>"; };
+		950F2A2CB6034F5FBDF47E7F /* SignInWithAppleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleButton.swift; sourceTree = "<group>"; };
+		79BF7476C1994D8FB33EAD45 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
+		538E7EB9AAFC414299FA3B38 /* PersonManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonManagementViewModel.swift; sourceTree = "<group>"; };
+		8109A99ECBEE4A249DA59300 /* RestaurantDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDetailViewModel.swift; sourceTree = "<group>"; };
+		0C73D191D6AB43129DCC9E3B /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		D4D64EBDA3914399AD45D9AB /* ClaudeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIService.swift; sourceTree = "<group>"; };
+		03FD7404D1744CACB48C1916 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		F5F5C5D9FE6E44AF8F2069BB /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		612019E94B7B40DDAE5C65C0 /* KakaoLocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoLocalService.swift; sourceTree = "<group>"; };
+		2897F596BF7945B7BC86133E /* MenuAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAnalysisService.swift; sourceTree = "<group>"; };
+		3697FED8DB734520BA2A3E82 /* NaverSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaverSearchService.swift; sourceTree = "<group>"; };
+		9DADE9B498634CB3B2987CEC /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
+		6FA3C5C2893B4D80AE2AB9A2 /* SafeEatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeEatApp.swift; sourceTree = "<group>"; };
+		E31617613E994B6AA3DCE23C /* SafeEat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafeEat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		72D34F8A44B54455B1C16EE4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		Frameworks /* Frameworks */ = {
+		1FAA4B4415DC4FB9B3BFA438 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -62,94 +68,109 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BC99EA57A4DC45F08B5A8C3E /* Services */ = {
+		C3F262BCE56D40F581CF77A3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-								0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */,
-C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */,
-				58D21435472F41518A1C2288 /* ClaudeAPIService.swift */,
-				C7877030BE1F41DEBDE9243A /* Config.swift */,
-				4664B36D2B8241E592AD83C8 /* FirestoreService.swift */,
-				6E31AECC6DC247BEBF022FBA /* MenuAnalysisService.swift */,
-				64A6FAAC8C114F10AC3746A4 /* NaverSearchService.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		Root = {
-			isa = PBXGroup;
-			children = (
-				SafeEat_Folder /* SafeEat */,
-				Products /* Products */,
-			);
-			sourceTree = "<group>";
-		};
-		Products /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				SafeEat_App /* SafeEat.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		SafeEat_Folder /* SafeEat */ = {
-			isa = PBXGroup;
-			children = (
-				SafeEatApp /* SafeEatApp.swift */,
-				Views_Folder /* Views */,
-				Models_Folder /* Models */,
-				ViewModels_Folder /* ViewModels */,
-				Utils_Folder /* Utils */,
-			
-				BC99EA57A4DC45F08B5A8C3E /* Services */,);
-			path = SafeEat;
-			sourceTree = "<group>";
-		};
-		Views_Folder /* Views */ = {
-			isa = PBXGroup;
-			children = (
-																4F59A6ABA3DD49A69949FDBA /* MainTabView.swift */,
-765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */,
-6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */,
-RestaurantDetailView /* RestaurantDetailView.swift */,
-			);
-			path = Views;
-			sourceTree = "<group>";
-		};
-		Models_Folder /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				Restaurant /* Restaurant.swift */,
+				7C0DB1156E5E4A92A8CE4A93 /* Restaurant.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		ViewModels_Folder /* ViewModels */ = {
+		EB1C7EA7DBBD496B8BA955AA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				RestaurantDetailViewModel /* RestaurantDetailViewModel.swift */,
+				998E3B49765E4701B27CD6FE /* FavoritesView.swift */,
+				326F9BC2AFFD4B51B6ED4691 /* LoginView.swift */,
+				D32280F46D4A49F0A5DCBF99 /* MainTabView.swift */,
+				A778A9A238D54C7595930AFB /* NaverMapView.swift */,
+				8B105939B38A4962BAD45BFD /* PersonManagementView.swift */,
+				DA9669A4BF95469B9ED231C9 /* RestaurantDetailView.swift */,
+				C61DF6D3009A41B58300A9D5 /* RestaurantSearchView.swift */,
+				950F2A2CB6034F5FBDF47E7F /* SignInWithAppleButton.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		ACA259D7DC0D41A5A54B1FFE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				79BF7476C1994D8FB33EAD45 /* FavoritesViewModel.swift */,
+				538E7EB9AAFC414299FA3B38 /* PersonManagementViewModel.swift */,
+				8109A99ECBEE4A249DA59300 /* RestaurantDetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		Utils_Folder /* Utils */ = {
+		C5BD913B45A94C3B82821410 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				ColorExtension /* ColorExtension.swift */,
+				0C73D191D6AB43129DCC9E3B /* AuthenticationService.swift */,
+				D4D64EBDA3914399AD45D9AB /* ClaudeAPIService.swift */,
+				03FD7404D1744CACB48C1916 /* Config.swift */,
+				F5F5C5D9FE6E44AF8F2069BB /* FirestoreService.swift */,
+				612019E94B7B40DDAE5C65C0 /* KakaoLocalService.swift */,
+				2897F596BF7945B7BC86133E /* MenuAnalysisService.swift */,
+				3697FED8DB734520BA2A3E82 /* NaverSearchService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D5CBA241D0F940AD93B664F5 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				9DADE9B498634CB3B2987CEC /* ColorExtension.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		ED6447764A16481D8C7C4585 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6FA3C5C2893B4D80AE2AB9A2 /* SafeEatApp.swift */,
+			);
+			path = SafeEat;
+			sourceTree = "<group>";
+		};
+		13FCB657750B4538AA0CBA18 /* SafeEat */ = {
+			isa = PBXGroup;
+			children = (
+				6FA3C5C2893B4D80AE2AB9A2 /* SafeEatApp.swift */,
+				EB1C7EA7DBBD496B8BA955AA /* Views */,
+				ACA259D7DC0D41A5A54B1FFE /* ViewModels */,
+				C3F262BCE56D40F581CF77A3 /* Models */,
+				C5BD913B45A94C3B82821410 /* Services */,
+				D5CBA241D0F940AD93B664F5 /* Utils */,
+				72D34F8A44B54455B1C16EE4 /* Assets.xcassets */,
+			);
+			path = SafeEat;
+			sourceTree = "<group>";
+		};
+		4608AC37DE3645309B85BA8C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E31617613E994B6AA3DCE23C /* SafeEat.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ABCCE9B749DE405E955C1C17 = {
+			isa = PBXGroup;
+			children = (
+				13FCB657750B4538AA0CBA18 /* SafeEat */,
+				4608AC37DE3645309B85BA8C /* Products */,
+			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		SafeEat /* SafeEat */ = {
+		80C5A508C9F2463CB94FD63F /* SafeEat */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = SafeEat_BuildConfigurationList /* Build configuration list for PBXNativeTarget "SafeEat" */;
+			buildConfigurationList = 2728F4A9A3C14F68B47A601A /* Build configuration list for PBXNativeTarget "SafeEat" */;
 			buildPhases = (
-				Sources /* Sources */,
-				Frameworks /* Frameworks */,
-				Resources /* Resources */,
+				6906517068F74C69BC9B7E67 /* Sources */,
+				1FAA4B4415DC4FB9B3BFA438 /* Frameworks */,
+				5DB66D6874B249AE9F4CA388 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -157,25 +178,25 @@ RestaurantDetailView /* RestaurantDetailView.swift */,
 			);
 			name = SafeEat;
 			productName = SafeEat;
-			productReference = SafeEat_App /* SafeEat.app */;
+			productReference = E31617613E994B6AA3DCE23C /* SafeEat.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		Project /* Project object */ = {
+		AFB9AE6B4F8B4991A78F29C0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					SafeEat = {
+					80C5A508C9F2463CB94FD63F = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = Project_BuildConfigurationList /* Build configuration list for PBXProject "SafeEat" */;
+			buildConfigurationList = EAF943532670497F85F745C3 /* Build configuration list for PBXProject "SafeEat" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -183,230 +204,173 @@ RestaurantDetailView /* RestaurantDetailView.swift */,
 				en,
 				Base,
 			);
-			mainGroup = Root;
-			productRefGroup = Products /* Products */;
+			mainGroup = ABCCE9B749DE405E955C1C17;
+			productRefGroup = 4608AC37DE3645309B85BA8C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				SafeEat /* SafeEat */,
+				80C5A508C9F2463CB94FD63F /* SafeEat */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		Resources /* Resources */ = {
+		5DB66D6874B249AE9F4CA388 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-																			B6D0F2B2BF344D56B1A8215C /* MainTabView.swift in Sources */,
-ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */,
-EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */,
-8F9A6577966C4241819A0670 /* FavoritesView.swift in Sources */,
-);
+				712CFD4B312047E48B9A5547 /* Assets.xcassets in Resources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		Sources /* Sources */ = {
+		6906517068F74C69BC9B7E67 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				SafeEatApp_Swift /* SafeEatApp.swift in Sources */,
-				RestaurantDetailView_Swift /* RestaurantDetailView.swift in Sources */,
-				Restaurant_Swift /* Restaurant.swift in Sources */,
-				RestaurantDetailViewModel_Swift /* RestaurantDetailViewModel.swift in Sources */,
-				ColorExtension_Swift /* ColorExtension.swift in Sources */,
-			
-				05F94212609C4438AC4BC753 /* AuthenticationService.swift in Sources */,
-				A020C347BC0D4AEABB8F0533 /* ClaudeAPIService.swift in Sources */,
-				2FB33C9AC0F44B88B9840EC4 /* Config.swift in Sources */,
-				2C682AFB41334155B58D90D2 /* FirestoreService.swift in Sources */,
-				17B8C164960F471ABD29C7A1 /* MenuAnalysisService.swift in Sources */,
-				842D2374319C4ABEA8E05188 /* NaverSearchService.swift in Sources */,);
+				D5BBBC640FA7412B9CBF64CB /* Restaurant.swift in Sources */,
+				46D6504727C74E80956A34C9 /* FavoritesView.swift in Sources */,
+				D089B9FEB6764622AA93DEE8 /* LoginView.swift in Sources */,
+				56E4F0DCB9AA4073A8092912 /* MainTabView.swift in Sources */,
+				54249B866667458FA73613B0 /* NaverMapView.swift in Sources */,
+				F6041FE904E2408FB81B9892 /* PersonManagementView.swift in Sources */,
+				B00874356CA849C9BA4C8C78 /* RestaurantDetailView.swift in Sources */,
+				3EDDB32726944B62AE0F3FB9 /* RestaurantSearchView.swift in Sources */,
+				0F9A670D7ABC476B98C50B87 /* SignInWithAppleButton.swift in Sources */,
+				DA1E34EC6CE8445B9DD60D28 /* FavoritesViewModel.swift in Sources */,
+				C5662E5F89D84242A7B64922 /* PersonManagementViewModel.swift in Sources */,
+				D5806DB121754C40AFA9EE7A /* RestaurantDetailViewModel.swift in Sources */,
+				7A98F5264B584DA4AE7D7A45 /* AuthenticationService.swift in Sources */,
+				94B05518DFDA4E58AB3F901F /* ClaudeAPIService.swift in Sources */,
+				6EA08FFD4ED94C57B3B1031A /* Config.swift in Sources */,
+				95ABA0DBB7B1497083BB6032 /* FirestoreService.swift in Sources */,
+				E60FDF514D2F4565BF63A2AD /* KakaoLocalService.swift in Sources */,
+				FEC4581698B745C292C161F1 /* MenuAnalysisService.swift in Sources */,
+				4CFC0D6D79844D6796685957 /* NaverSearchService.swift in Sources */,
+				B343D73A84E8435CB7D68259 /* ColorExtension.swift in Sources */,
+				E491BF45AE5445E9A48A456E /* SafeEatApp.swift in Sources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		Debug /* Debug */ = {
+		03CBC188F5C6426B96FA33CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		420FB09ECC894E569996F18A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0080EF2D143449E0AF69E67D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASS ETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SafeEat/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.safeeat.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		Release /* Release */ = {
+		B3F21C59794B47F0995C8B82 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
+				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SafeEat/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.safeeat.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		Project_BuildConfigurationList /* Build configuration list for PBXProject "SafeEat" */ = {
+		C3A4ED8712DA4FAD938AE140 /* Build configuration list for PBXProject "SafeEat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				Debug /* Debug */,
-				Release /* Release */,
+				D4A3D0A56D8947F1A0D20D8C /* Debug */,
+				330103A753BF4B07A85E6538 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		SafeEat_BuildConfigurationList /* Build configuration list for PBXNativeTarget "SafeEat" */ = {
+		BCABB5E16B3F4D2088EEC055 /* Build configuration list for PBXNativeTarget "SafeEat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				Debug /* Debug */,
-				Release /* Release */,
+				4DD14749A47C41EFBE42A6F2 /* Debug */,
+				4B45F7E4293945DBB0F2A45A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = Project /* Project object */;
+	rootObject = AFB9AE6B4F8B4991A78F29C0 /* Project object */;
 }
