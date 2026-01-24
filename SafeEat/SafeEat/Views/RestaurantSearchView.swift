@@ -12,7 +12,7 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
-    @State private var sheetHeight: CGFloat = 200 // 하단 시트 높이
+    @State private var sheetHeight: CGFloat = 600 // 하단 시트 높이 (기본값 최대로 설정)
     @State private var isDragging = false
 
     let minSheetHeight: CGFloat = 200

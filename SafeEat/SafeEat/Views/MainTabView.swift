@@ -12,10 +12,15 @@ struct MainTabView: View {
     @StateObject private var favoritesViewModel = FavoritesViewModel()
 
     init() {
-        // 탭바 배경색을 흰색으로 설정
+        // 탭바 배경색을 흰색으로 설정하고 여백 추가
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
+
+        // 아이템 간격 조정 (더 여유있게)
+        appearance.stackedLayoutAppearance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: 2)
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1.0)
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(red: 0.977, green: 0.427, blue: 0.355, alpha: 1.0)
 
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
