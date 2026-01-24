@@ -1,0 +1,27 @@
+# Firebase Admin SDK 인증 파일 (절대 Git에 올리지 말 것!)
+firebase-admin-key.json
+*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

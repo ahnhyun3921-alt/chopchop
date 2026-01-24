@@ -1,0 +1,16 @@
+# SafeEat 메뉴 수집 스크립트 의존성
+
+# 이미지 처리
+Pillow>=10.0.0
+
+# OCR (Tesseract)
+pytesseract>=0.3.10
+
+# Google API
+google-api-python-client>=2.100.0
+
+# Firebase Admin SDK
+firebase-admin>=6.2.0
+
+# HTTP 요청
+requests>=2.31.0
