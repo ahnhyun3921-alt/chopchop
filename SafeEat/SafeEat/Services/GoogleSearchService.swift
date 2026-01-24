@@ -11,10 +11,9 @@ import UIKit
 class GoogleSearchService {
     static let shared = GoogleSearchService()
 
-    // TODO: Google Cloud Console에서 발급받은 API 키와 CX(Custom Search Engine ID) 입력
-    // https://developers.google.com/custom-search/v1/overview
-    private let apiKey = "YOUR_GOOGLE_API_KEY"  // Google Cloud Console에서 발급
-    private let cx = "YOUR_CUSTOM_SEARCH_ENGINE_ID"  // Programmable Search Engine에서 생성
+    // Google Cloud Console API 키와 Programmable Search Engine ID
+    private let apiKey = "AIzaSyDxRZDZ5bTAdcNXrI2RtEddmO20DMlPX-8"
+    private let cx = "c517cbc75ca1044ac"
 
     private init() {}
 
