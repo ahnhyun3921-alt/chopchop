@@ -80,13 +80,23 @@ class FirestoreService {
 
     /// 식당 정보 캐시에 저장
     func cacheRestaurant(_ restaurant: Restaurant) async throws {
-        // Firebase 설치 전 임시 구현 - 캐싱하지 않음
+        // Firebase 설치 전 임시 구현 - UserDefaults에 JSON으로 저장
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(restaurant) {
+            UserDefaults.standard.set(encoded, forKey: "restaurant_\(restaurant.id)")
+        }
         // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 
     /// 캐시된 식당 정보 가져오기
     func getCachedRestaurant(restaurantId: String) async throws -> Restaurant? {
-        // Firebase 설치 전 임시 구현 - nil 반환
+        // Firebase 설치 전 임시 구현 - UserDefaults에서 JSON 디코딩
+        if let data = UserDefaults.standard.data(forKey: "restaurant_\(restaurantId)") {
+            let decoder = JSONDecoder()
+            if let restaurant = try? decoder.decode(Restaurant.self, from: data) {
+                return restaurant
+            }
+        }
         // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
         return nil
     }

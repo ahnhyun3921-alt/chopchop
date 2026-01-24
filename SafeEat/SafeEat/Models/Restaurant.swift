@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Restaurant: Identifiable {
+struct Restaurant: Identifiable, Codable {
     let id: String
     let name: String
     let category: String
@@ -43,12 +43,34 @@ struct Restaurant: Identifiable {
     )
 }
 
-struct DayOperatingHours: Identifiable {
+struct DayOperatingHours: Identifiable, Codable {
     let id = UUID()
     let day: String
     let hours: String
     let breakTime: String?
     let lastOrder: String
+
+    // Codable을 위한 커스텀 키 (id 제외)
+    enum CodingKeys: String, CodingKey {
+        case day, hours, breakTime, lastOrder
+    }
+
+    // 디코딩 시 id는 새로 생성
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.day = try container.decode(String.self, forKey: .day)
+        self.hours = try container.decode(String.self, forKey: .hours)
+        self.breakTime = try container.decodeIfPresent(String.self, forKey: .breakTime)
+        self.lastOrder = try container.decode(String.self, forKey: .lastOrder)
+    }
+
+    // 일반 생성자
+    init(day: String, hours: String, breakTime: String?, lastOrder: String) {
+        self.day = day
+        self.hours = hours
+        self.breakTime = breakTime
+        self.lastOrder = lastOrder
+    }
 }
 
 struct Menu: Identifiable {

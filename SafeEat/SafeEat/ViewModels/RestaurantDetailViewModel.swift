@@ -39,7 +39,9 @@ class RestaurantDetailViewModel: ObservableObject {
                 let userId = "temp_user_id"
 
                 if isFavorite {
+                    // 즐겨찾기 추가 + 식당 정보 캐싱
                     try await FirestoreService.shared.addFavorite(userId: userId, restaurantId: restaurant.id)
+                    try await FirestoreService.shared.cacheRestaurant(restaurant)
                 } else {
                     try await FirestoreService.shared.removeFavorite(userId: userId, restaurantId: restaurant.id)
                 }

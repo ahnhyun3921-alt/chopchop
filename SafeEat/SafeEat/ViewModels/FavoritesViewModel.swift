@@ -93,7 +93,9 @@ class FavoritesViewModel: ObservableObject {
                 // TODO: 실제 userId를 AuthenticationService에서 가져와야 함
                 let userId = "temp_user_id"
 
+                // 즐겨찾기 추가 + 식당 정보 캐싱
                 try await firestoreService.addFavorite(userId: userId, restaurantId: restaurant.id)
+                try await firestoreService.cacheRestaurant(restaurant)
 
                 // 로컬 목록에도 추가
                 await MainActor.run {
