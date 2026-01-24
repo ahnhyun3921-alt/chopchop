@@ -14,41 +14,43 @@ struct RestaurantDetailView: View {
         ZStack {
             Color.white.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // 네비게이션 바
-                NavigationBar(restaurantName: viewModel.restaurant.name, category: viewModel.restaurant.category)
+            ScrollView {
+                VStack(spacing: 0) {
+                    // 이미지 갤러리
+                    ImageGallery()
 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        // 이미지 갤러리
-                        ImageGallery()
-
-                        // 위치 정보
-                        LocationSection(
+                    // 위치 정보
+                    LocationSection(
                             rating: viewModel.restaurant.rating,
                             distance: viewModel.restaurant.distance
                         )
                         .padding(.horizontal, 20)
                         .padding(.top, 16)
 
-                        // 영업시간
-                        OperatingHoursSection(
-                            status: viewModel.restaurant.operatingStatus,
-                            hours: viewModel.restaurant.operatingHours,
-                            isExpanded: $viewModel.isOperatingHoursExpanded
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.top, 12)
+                    // 영업시간
+                    OperatingHoursSection(
+                        status: viewModel.restaurant.operatingStatus,
+                        hours: viewModel.restaurant.operatingHours,
+                        isExpanded: $viewModel.isOperatingHoursExpanded
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
 
-                        Divider()
-                            .background(Color(hex: "F5F5F5"))
-                            .padding(.top, 20)
+                    Divider()
+                        .background(Color(hex: "F5F5F5"))
+                        .padding(.top, 20)
 
-                        // 메뉴 섹션
-                        MenuSection(viewModel: viewModel)
-                            .padding(.top, 20)
-                    }
+                    // 메뉴 섹션
+                    MenuSection(viewModel: viewModel)
+                        .padding(.top, 20)
                 }
+            }
+            .ignoresSafeArea(.all, edges: .top)
+
+            // 네비게이션 바 - 이미지 위에 겹침
+            VStack(spacing: 0) {
+                NavigationBar(restaurantName: viewModel.restaurant.name, category: viewModel.restaurant.category)
+                Spacer()
             }
         }
         .navigationBarHidden(true)
@@ -106,7 +108,7 @@ struct NavigationBar: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .background(Color.white)
+        .background(Color.white.opacity(0.0))
     }
 }
 
@@ -125,7 +127,7 @@ struct ImageGallery: View {
                     )
             }
         }
-        .frame(height: 280)
+        .frame(height: 320)
     }
 }
 
