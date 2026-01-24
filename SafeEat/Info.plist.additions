@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- 위치 권한 설명 -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>주변 식당을 찾기 위해 위치 정보가 필요합니다</string>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>주변 식당을 찾기 위해 위치 정보가 필요합니다</string>
+
+	<!-- 네이버 지도 Client ID -->
+	<!-- 실제 API 키로 교체하세요! -->
+	<key>NMFClientId</key>
+	<string>YOUR_NAVER_MAPS_CLIENT_ID</string>
+
+	<!-- HTTP 통신 허용 (개발용) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+
+	<!-- 앱 표시 이름 -->
+	<key>CFBundleDisplayName</key>
+	<string>SafeEat</string>
+
+	<!-- 지원하는 인터페이스 방향 (iPhone) -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+
+	<!-- 지원하는 인터페이스 방향 (iPad) -->
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
+</plist>
+
+<!--
+사용 방법:
+1. Xcode에서 SafeEat 프로젝트의 Info.plist 열기
+2. 위의 내용을 복사하여 기존 Info.plist에 추가
+3. NMFClientId 값을 실제 네이버 지도 API Client ID로 교체
+-->

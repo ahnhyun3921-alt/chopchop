@@ -35,23 +35,37 @@ CHOPCHOP 앱 스타일을 참고한 따뜻한 디자인:
 ```
 SafeEat/
 ├── SafeEat/
-│   ├── SafeEatApp.swift          # 앱 진입점 + Firebase 초기화
+│   ├── SafeEatApp.swift          # 앱 진입점 + 인증 플로우
 │   ├── GoogleService-Info.plist  # Firebase 설정 파일
+│   ├── Info.plist.additions      # Info.plist 추가 설정 가이드
+│   ├── Podfile                   # CocoaPods 의존성
 │   ├── Views/
-│   │   ├── RestaurantDetailView.swift  # 식당 조회 페이지
-│   │   ├── LoginView.swift             # 로그인 화면
-│   │   └── SignInWithAppleButton.swift # Apple 로그인 버튼
-│   ├── Models/
-│   │   └── Restaurant.swift       # 데이터 모델
+│   │   ├── MainTabView.swift              # 메인 탭 화면 (검색/즐겨찾기/인물/프로필)
+│   │   ├── RestaurantSearchView.swift     # 식당 검색 화면 (리스트/지도)
+│   │   ├── RestaurantDetailView.swift     # 식당 상세 페이지
+│   │   ├── PersonManagementView.swift     # 인물 관리 화면
+│   │   ├── NaverMapView.swift             # 네이버 지도 뷰
+│   │   ├── LoginView.swift                # 로그인 화면
+│   │   └── SignInWithAppleButton.swift    # Apple 로그인 버튼
 │   ├── ViewModels/
-│   │   └── RestaurantDetailViewModel.swift
+│   │   ├── RestaurantDetailViewModel.swift
+│   │   └── PersonManagementViewModel.swift
+│   ├── Models/
+│   │   └── Restaurant.swift       # 데이터 모델 (Restaurant, Menu, Person)
 │   ├── Services/
-│   │   ├── AuthenticationService.swift # Apple 로그인 처리
-│   │   └── FirestoreService.swift      # Firestore 데이터베이스 서비스
+│   │   ├── AuthenticationService.swift    # Apple 로그인 인증
+│   │   ├── FirestoreService.swift         # Firestore 데이터베이스
+│   │   ├── NaverSearchService.swift       # 네이버 지역 검색 API
+│   │   ├── ClaudeAPIService.swift         # Claude AI 메뉴 분석
+│   │   └── MenuAnalysisService.swift      # 메뉴 안전성 분석
 │   └── Utils/
 │       └── ColorExtension.swift   # 색상 시스템
 ├── SafeEat.xcodeproj/
+├── .env.example                  # 환경 변수 템플릿
+├── .gitignore                    # Git 제외 파일
 ├── FIREBASE_SETUP.md             # Firebase 설정 가이드
+├── NAVER_MAPS_SETUP.md           # 네이버 지도 설정 가이드
+├── CLAUDE_API_SETUP.md           # Claude API 설정 가이드
 └── ADD_FILES_TO_XCODE.md         # 파일 추가 가이드
 ```
 
@@ -84,6 +98,15 @@ SafeEat/
   - MenuAnalysisService: 안전한 메뉴 필터링
   - 메뉴 → 재료 분석
   - 알러지 확률 계산
+- [x] **인물 관리 화면 (코드 작성 완료)**
+  - PersonManagementView: 인물 추가/수정/삭제 UI
+  - PersonManagementViewModel: 인물 관리 로직
+  - 알레르기 선택 UI (19가지 제한 식품)
+- [x] **메인 탭 화면 및 앱 네비게이션 (코드 작성 완료)**
+  - MainTabView: 4개 탭 (검색/즐겨찾기/인물/프로필)
+  - 로그인 플로우 (LoginView ↔ MainTabView)
+  - 즐겨찾기 화면
+  - 프로필/설정 화면
 
 ### ⚙️ 설정 필요 (사용자가 수행해야 할 작업)
 
@@ -116,12 +139,13 @@ cp .env.example .env
 
 **설정 가이드**: `CLAUDE_API_SETUP.md` 참조
 
-### 🚧 다음 단계
-- [ ] 재료 관리 화면 (사용자가 제한 식품 추가/삭제)
-- [ ] 인물 관리 화면 (가족 구성원 및 제한 식품 관리)
-- [ ] 메인 화면 (홈 피드)
-- [ ] 프로필 화면
-- [ ] 설정 화면
+### 🚧 다음 단계 (선택사항)
+- [ ] 식당 메뉴 정보 크롤링/수집
+- [ ] 실제 식당 영업시간 정보 통합
+- [ ] 식당 이미지 업로드 기능
+- [ ] 리뷰 및 평점 기능
+- [ ] 푸시 알림 (새로운 안전한 식당 추천)
+- [ ] 공유 기능 (카카오톡, 메시지)
 
 ## 실행 방법
 
