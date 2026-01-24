@@ -138,7 +138,7 @@ struct PersonCard: View {
 
                 Spacer()
 
-                Menu {
+                SwiftUI.Menu {
                     Button(action: onEdit) {
                         Label("수정", systemImage: "pencil")
                     }
