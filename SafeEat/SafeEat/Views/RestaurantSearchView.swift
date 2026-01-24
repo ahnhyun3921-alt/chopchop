@@ -303,18 +303,23 @@ class RestaurantSearchViewModel: ObservableObject {
         hasSearched = true
 
         do {
+            // 키워드 검색은 전국 검색 (location을 nil로 설정)
+            // 이렇게 하면 "강남 맛집" 검색 시 강남 지역의 맛집이 나옴
             let response = try await kakaoService.searchKeyword(
                 query: keyword,
-                location: location,
-                radius: 5000,
+                location: nil,  // 전국 검색
+                radius: 20000,
                 size: 15
             )
 
             restaurants = response.documents.map { $0.toRestaurant() }
 
-            // 검색 결과 첫 번째 위치로 지도 이동
-            if let first = restaurants.first, let coord = first.coordinate {
-                mapCenter = coord
+            // 검색 결과가 있으면 모든 결과를 볼 수 있도록 지도 범위 조정
+            if !restaurants.isEmpty {
+                // 첫 번째 결과 위치로 지도 이동
+                if let first = restaurants.first, let coord = first.coordinate {
+                    mapCenter = coord
+                }
             }
 
             isLoading = false

@@ -41,6 +41,7 @@ struct KakaoMapView: UIViewRepresentable {
         mapView.removeAnnotations(mapView.annotations.filter { !($0 is MKUserLocation) })
 
         // 식당 마커 추가
+        var addedAnnotations: [RestaurantAnnotation] = []
         for restaurant in restaurants {
             guard let coordinate = restaurant.coordinate else { continue }
 
@@ -49,18 +50,10 @@ struct KakaoMapView: UIViewRepresentable {
                 restaurant: restaurant
             )
             mapView.addAnnotation(annotation)
+            addedAnnotations.append(annotation)
         }
 
-        // mapCenter가 변경되면 지도 이동
-        if let center = mapCenter {
-            let region = MKCoordinateRegion(
-                center: center,
-                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-            )
-            mapView.setRegion(region, animated: true)
-        }
-
-        // 선택된 식당이 있으면 해당 위치로 이동
+        // 선택된 식당이 있으면 해당 위치로 줌인
         if let selected = selectedRestaurant,
            let coordinate = selected.coordinate {
             let region = MKCoordinateRegion(
@@ -68,6 +61,44 @@ struct KakaoMapView: UIViewRepresentable {
                 span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
             )
             mapView.setRegion(region, animated: true)
+            context.coordinator.lastMapCenter = coordinate
+        }
+        // mapCenter가 변경되었고 마커가 있으면 해당 위치로 이동하되, 모든 마커를 볼 수 있도록 범위 조정
+        else if let center = mapCenter,
+                !addedAnnotations.isEmpty,
+                context.coordinator.lastMapCenter != center {
+            // 모든 마커를 포함하는 영역 계산
+            var minLat = center.latitude
+            var maxLat = center.latitude
+            var minLon = center.longitude
+            var maxLon = center.longitude
+
+            for annotation in addedAnnotations {
+                let coord = annotation.coordinate
+                minLat = min(minLat, coord.latitude)
+                maxLat = max(maxLat, coord.latitude)
+                minLon = min(minLon, coord.longitude)
+                maxLon = max(maxLon, coord.longitude)
+            }
+
+            // 여유 공간 추가 (20%)
+            let latDelta = (maxLat - minLat) * 1.4
+            let lonDelta = (maxLon - minLon) * 1.4
+
+            let newCenter = CLLocationCoordinate2D(
+                latitude: (minLat + maxLat) / 2,
+                longitude: (minLon + maxLon) / 2
+            )
+
+            let region = MKCoordinateRegion(
+                center: newCenter,
+                span: MKCoordinateSpan(
+                    latitudeDelta: max(latDelta, 0.01),  // 최소 범위 설정
+                    longitudeDelta: max(lonDelta, 0.01)
+                )
+            )
+            mapView.setRegion(region, animated: true)
+            context.coordinator.lastMapCenter = center
         }
     }
 
@@ -77,6 +108,7 @@ struct KakaoMapView: UIViewRepresentable {
 
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: KakaoMapView
+        var lastMapCenter: CLLocationCoordinate2D?
 
         init(_ parent: KakaoMapView) {
             self.parent = parent
