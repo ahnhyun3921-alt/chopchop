@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */; };
+
+		EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */; };
+
+		8F9A6577966C4241819A0670 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */; };
+
 		05F94212609C4438AC4BC753 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */; };
 		A020C347BC0D4AEABB8F0533 /* ClaudeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58D21435472F41518A1C2288 /* ClaudeAPIService.swift */; };
 		2FB33C9AC0F44B88B9840EC4 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7877030BE1F41DEBDE9243A /* Config.swift */; };
@@ -21,6 +27,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoLocalService.swift; sourceTree = "<group>"; };
+
+		765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
+
+		6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+
 		C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		58D21435472F41518A1C2288 /* ClaudeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPIService.swift; sourceTree = "<group>"; };
 		C7877030BE1F41DEBDE9243A /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
@@ -49,7 +61,8 @@
 		BC99EA57A4DC45F08B5A8C3E /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */,
+								0A42622C9E784BFFA1B24134 /* KakaoLocalService.swift */,
+C4B74556FBE848AE90BE1433 /* AuthenticationService.swift */,
 				58D21435472F41518A1C2288 /* ClaudeAPIService.swift */,
 				C7877030BE1F41DEBDE9243A /* Config.swift */,
 				4664B36D2B8241E592AD83C8 /* FirestoreService.swift */,
@@ -91,7 +104,9 @@
 		Views_Folder /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				RestaurantDetailView /* RestaurantDetailView.swift */,
+												765E72C72DA8499A9A4236CD /* FavoritesViewModel.swift */,
+6950A77C37AB4EEAB111ABFA /* FavoritesView.swift */,
+RestaurantDetailView /* RestaurantDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -178,7 +193,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
+															ACA4AC48339E453CA1338F0C /* KakaoLocalService.swift in Sources */,
+EB15446A52F6492887C30A37 /* FavoritesViewModel.swift in Sources */,
+8F9A6577966C4241819A0670 /* FavoritesView.swift in Sources */,
+);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
