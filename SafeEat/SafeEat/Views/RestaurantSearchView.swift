@@ -12,12 +12,11 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
-    @State private var selectedRestaurantForNav: Restaurant?
-    @State private var isNavigatingToDetail = false
 
     // 드래그 가능한 리스트 높이
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.3  // 초기 30%
     @State private var isDragging = false
+    @State private var dragStartHeight: CGFloat = 0  // 드래그 시작 시 높이
 
     let minSheetHeight: CGFloat = 120  // 최소 높이
     var maxSheetHeight: CGFloat {
@@ -89,9 +88,12 @@ struct RestaurantSearchView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { value in
-                                    isDragging = true
+                                    if !isDragging {
+                                        isDragging = true
+                                        dragStartHeight = sheetHeight
+                                    }
                                     let dragAmount = -value.translation.height  // 위로 드래그하면 양수
-                                    let newHeight = (UIScreen.main.bounds.height * 0.3) + dragAmount
+                                    let newHeight = dragStartHeight + dragAmount
                                     sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
                                 }
                                 .onEnded { value in
@@ -167,18 +169,22 @@ struct RestaurantSearchView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 ForEach(viewModel.restaurants) { restaurant in
-                                    Button(action: {
-                                        // 지도 중심 이동
-                                        viewModel.selectedRestaurant = restaurant
-                                        viewModel.mapCenter = restaurant.coordinate
+                                    ZStack {
+                                        // 배경에 숨겨진 NavigationLink
+                                        NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                                            EmptyView()
+                                        }
+                                        .opacity(0)
 
-                                        // 상세 페이지로 이동
-                                        selectedRestaurantForNav = restaurant
-                                        isNavigatingToDetail = true
-                                    }) {
+                                        // 실제 표시되는 카드
                                         RestaurantSearchCard(restaurant: restaurant)
+                                            .contentShape(Rectangle())
+                                            .onTapGesture {
+                                                // 지도 중심 이동만 (NavigationLink는 자동으로 작동)
+                                                viewModel.selectedRestaurant = restaurant
+                                                viewModel.mapCenter = restaurant.coordinate
+                                            }
                                     }
-                                    .buttonStyle(PlainButtonStyle())
 
                                     Divider()
                                         .background(Color(hex: "#EEEEEE"))
@@ -187,14 +193,6 @@ struct RestaurantSearchView: View {
                             .padding(.top, 12)
                         }
                         .frame(maxWidth: .infinity, maxHeight: sheetHeight - 25)
-                        .background(
-                            NavigationLink(
-                                destination: selectedRestaurantForNav.map { RestaurantDetailView(restaurant: $0) },
-                                isActive: $isNavigatingToDetail
-                            ) {
-                                EmptyView()
-                            }
-                        )
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: sheetHeight)
