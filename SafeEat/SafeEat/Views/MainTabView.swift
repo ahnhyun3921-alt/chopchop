@@ -48,65 +48,6 @@ struct MainTabView: View {
     }
 }
 
-// MARK: - Favorites View
-
-struct FavoritesView: View {
-    @State private var favoriteRestaurants: [Restaurant] = []
-
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color.safeEatBackground.ignoresSafeArea()
-
-                if favoriteRestaurants.isEmpty {
-                    VStack(spacing: 20) {
-                        Spacer()
-
-                        Image(systemName: "heart.slash.fill")
-                            .font(.system(size: 64))
-                            .foregroundColor(.safeEatTextSecondary.opacity(0.5))
-
-                        Text("즐겨찾기한 식당이 없습니다")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.safeEatTextPrimary)
-
-                        Text("마음에 드는 식당을 하트로 저장하세요")
-                            .font(.system(size: 14))
-                            .foregroundColor(.safeEatTextSecondary)
-
-                        Spacer()
-                    }
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(favoriteRestaurants) { restaurant in
-                                NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                                    RestaurantSearchCard(restaurant: restaurant)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-
-                                Divider()
-                                    .background(Color(hex: "#EEEEEE"))
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("즐겨찾기")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-        .onAppear {
-            loadFavorites()
-        }
-    }
-
-    private func loadFavorites() {
-        // TODO: Firebase에서 즐겨찾기 목록 불러오기
-        // 임시로 빈 배열
-        favoriteRestaurants = []
-    }
-}
-
 // MARK: - Profile View
 
 struct ProfileView: View {
