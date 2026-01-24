@@ -9,6 +9,13 @@ import Foundation
 import CoreLocation
 import Combine
 
+// CLLocationCoordinate2D를 Equatable로 확장
+extension CLLocationCoordinate2D: Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
+}
+
 class LocationManager: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
 
