@@ -92,36 +92,65 @@ def init_firebase(dry_run=False):
 # ==================== Kakao Local API ====================
 
 def search_restaurants(location, radius=5000, size=15):
-    """카카오 로컬 API로 식당 검색"""
+    """카카오 로컬 API로 식당 검색 (페이지네이션 지원)
+
+    카카오 API는 한 번에 최대 15개까지만 반환.
+    더 많은 결과가 필요하면 여러 페이지를 가져옴.
+    """
     url = "https://dapi.kakao.com/v2/local/search/keyword.json"
     headers = {"Authorization": f"KakaoAK {KAKAO_API_KEY}"}
-    params = {
-        "query": f"{location} 맛집",
-        "category_group_code": "FD6",  # 음식점
-        "size": size,
-        "radius": radius
-    }
-
-    try:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
-    except Exception as e:
-        print(f"❌ 카카오 API 오류: {e}")
-        return []
 
     restaurants = []
-    for doc in data.get("documents", []):
-        restaurant = {
-            "id": doc["id"],
-            "name": doc["place_name"],
-            "category": doc.get("category_name", "").split(" > ")[-1] if doc.get("category_name") else "",
-            "address": doc.get("address_name", ""),
-            "phone": doc.get("phone", ""),
-            "latitude": float(doc["y"]),
-            "longitude": float(doc["x"])
+    seen_ids = set()  # 중복 방지
+    page = 1
+    max_pages = (size + 14) // 15  # 필요한 페이지 수 계산
+
+    while len(restaurants) < size and page <= max_pages:
+        params = {
+            "query": f"{location} 맛집",
+            "category_group_code": "FD6",  # 음식점
+            "size": min(15, size - len(restaurants)),  # 최대 15
+            "page": page,
+            "radius": radius
         }
-        restaurants.append(restaurant)
+
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            data = response.json()
+        except Exception as e:
+            print(f"❌ 카카오 API 오류: {e}")
+            break
+
+        documents = data.get("documents", [])
+        if not documents:
+            break  # 더 이상 결과 없음
+
+        for doc in documents:
+            if doc["id"] in seen_ids:
+                continue
+            seen_ids.add(doc["id"])
+
+            restaurant = {
+                "id": doc["id"],
+                "name": doc["place_name"],
+                "category": doc.get("category_name", "").split(" > ")[-1] if doc.get("category_name") else "",
+                "address": doc.get("address_name", ""),
+                "phone": doc.get("phone", ""),
+                "latitude": float(doc["y"]),
+                "longitude": float(doc["x"])
+            }
+            restaurants.append(restaurant)
+
+            if len(restaurants) >= size:
+                break
+
+        # 다음 페이지가 없으면 종료
+        if data.get("meta", {}).get("is_end", True):
+            break
+
+        page += 1
+        time.sleep(0.2)  # API 제한 방지
 
     return restaurants
 
