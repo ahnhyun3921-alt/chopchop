@@ -181,52 +181,96 @@ def clean_restaurant_name(name):
     return name.strip()
 
 def search_menu_images(restaurant_name, location, num=10):
-    """네이버 이미지 검색으로 메뉴 이미지 URL 찾기
+    """이미지 검색 (DuckDuckGo 사용 - API 키 불필요)
 
     Args:
         restaurant_name: 식당 이름
         location: 지역명 (필수!)
         num: 검색할 이미지 수
     """
-    url = "https://openapi.naver.com/v1/search/image"
-    headers = {
-        "X-Naver-Client-Id": NAVER_CLIENT_ID,
-        "X-Naver-Client-Secret": NAVER_CLIENT_SECRET
-    }
-
     # 지점명 제거 (예: '맛있는집 평촌점' → '맛있는집')
     clean_name = clean_restaurant_name(restaurant_name)
 
-    # 검색 쿼리 조합 (지역 + 식당명(지점명 제외) + 메뉴)
-    query = f"{location} {clean_name} 메뉴"
+    # 검색 쿼리 조합 (지역 + 식당명(지점명 제외) + 메뉴판)
+    query = f"{location} {clean_name} 메뉴판"
     debug_log(f"원래 식당명: '{restaurant_name}'")
     debug_log(f"정제된 식당명: '{clean_name}'")
     debug_log(f"검색 쿼리: '{query}'")
 
-    params = {
-        "query": query,
-        "display": min(num, 100),  # 최대 100개
-        "sort": "sim"  # 유사도순
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     }
 
     try:
-        response = requests.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        data = response.json()
+        # DuckDuckGo 이미지 검색
+        # 먼저 토큰 얻기
+        token_url = "https://duckduckgo.com/"
+        token_params = {"q": query}
+        token_resp = requests.get(token_url, params=token_params, headers=headers, timeout=10)
 
-        if "items" not in data:
-            debug_log(f"검색 결과 없음: {data}")
+        # vqd 토큰 추출
+        vqd_match = re.search(r'vqd=([\d-]+)', token_resp.text)
+        if not vqd_match:
+            vqd_match = re.search(r'vqd="([\d-]+)"', token_resp.text)
+        if not vqd_match:
+            debug_log("DuckDuckGo 토큰을 찾을 수 없음")
             return []
 
+        vqd = vqd_match.group(1)
+        debug_log(f"DuckDuckGo vqd 토큰: {vqd}")
+
+        # 이미지 검색
+        image_url = "https://duckduckgo.com/i.js"
+        image_params = {
+            "l": "kr-kr",
+            "o": "json",
+            "q": query,
+            "vqd": vqd,
+            "f": ",,,",
+            "p": "1",
+        }
+
+        image_resp = requests.get(image_url, params=image_params, headers=headers, timeout=10)
+        data = image_resp.json()
+
         results = []
-        for item in data["items"]:
+        for item in data.get("results", [])[:num]:
             results.append({
-                "url": item["link"],
+                "url": item.get("image", ""),
                 "title": item.get("title", ""),
-                "source": urlparse(item["link"]).netloc
+                "source": item.get("source", "")
             })
 
         debug_log(f"검색 결과 {len(results)}개")
+        return results
+
+    except Exception as e:
+        debug_log(f"DuckDuckGo 검색 실패: {e}")
+
+    # 폴백: 구글 이미지 검색 (간단한 스크래핑)
+    try:
+        debug_log("Google 이미지 검색 시도...")
+        google_url = f"https://www.google.com/search?q={requests.utils.quote(query)}&tbm=isch"
+        google_resp = requests.get(google_url, headers=headers, timeout=10)
+
+        # 이미지 URL 추출
+        img_pattern = r'\["(https://[^"]+\.(?:jpg|jpeg|png|webp))"'
+        matches = re.findall(img_pattern, google_resp.text, re.IGNORECASE)
+
+        results = []
+        seen = set()
+        for url in matches[:num*2]:  # 더 많이 찾아서 필터링
+            if url not in seen and 'gstatic' not in url:
+                seen.add(url)
+                results.append({
+                    "url": url,
+                    "title": query,
+                    "source": urlparse(url).netloc
+                })
+            if len(results) >= num:
+                break
+
+        debug_log(f"Google 검색 결과 {len(results)}개")
         return results
 
     except Exception as e:
