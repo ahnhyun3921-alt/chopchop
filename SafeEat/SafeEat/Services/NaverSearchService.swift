@@ -11,9 +11,9 @@ import CoreLocation
 class NaverSearchService {
     static let shared = NaverSearchService()
 
-    // TODO: 실제 API 키로 교체 필요 (.env 파일에서 읽어오기)
-    private let clientId = "YOUR_NAVER_CLIENT_ID"
-    private let clientSecret = "YOUR_NAVER_CLIENT_SECRET"
+    // 네이버 클라우드 플랫폼 API 키
+    private let clientId = "6llt2y100z"
+    private let clientSecret = "XiWCGUBQxts4fNjsoEqecsOMk0nyf6Z3KPvn8rbj"
 
     private let baseURL = "https://openapi.naver.com/v1/search/local.json"
 

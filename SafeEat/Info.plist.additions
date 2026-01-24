@@ -10,9 +10,8 @@
 	<string>주변 식당을 찾기 위해 위치 정보가 필요합니다</string>
 
 	<!-- 네이버 지도 Client ID -->
-	<!-- 실제 API 키로 교체하세요! -->
 	<key>NMFClientId</key>
-	<string>YOUR_NAVER_MAPS_CLIENT_ID</string>
+	<string>6llt2y100z</string>
 
 	<!-- HTTP 통신 허용 (개발용) -->
 	<key>NSAppTransportSecurity</key>
