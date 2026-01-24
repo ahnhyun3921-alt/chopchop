@@ -139,6 +139,7 @@ struct NaverPlace: Codable, Identifiable {
 
     // Restaurant 모델로 변환
     func toRestaurant() -> Restaurant {
+        let coordinate = self.coordinate
         return Restaurant(
             id: id,
             name: cleanTitle,
@@ -149,7 +150,10 @@ struct NaverPlace: Codable, Identifiable {
             operatingStatus: "영업 중",  // TODO: 실제 영업 상태 확인
             operatingHours: [],  // TODO: 영업시간 정보 가져오기
             totalMenuCount: 0,  // TODO: 메뉴 정보 가져오기
-            imageUrl: nil  // TODO: 이미지 URL 가져오기
+            imageUrl: nil,  // TODO: 이미지 URL 가져오기
+            phoneNumber: telephone.isEmpty ? nil : telephone,
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
         )
     }
 
