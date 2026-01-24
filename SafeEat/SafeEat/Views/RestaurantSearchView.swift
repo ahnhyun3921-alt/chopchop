@@ -13,9 +13,13 @@ struct RestaurantSearchView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
 
-    // 화면 높이의 60% 사용
-    var sheetHeight: CGFloat {
-        UIScreen.main.bounds.height * 0.6
+    // 드래그 가능한 리스트 높이
+    @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.3  // 초기 30%
+    @State private var isDragging = false
+
+    let minSheetHeight: CGFloat = 120  // 최소 높이
+    var maxSheetHeight: CGFloat {
+        UIScreen.main.bounds.height * 0.75  // 최대 75%
     }
 
     var body: some View {
@@ -72,8 +76,14 @@ struct RestaurantSearchView: View {
 
                 Spacer()
 
-                // 하단 리스트 (고정 - 화면 전체 너비)
+                // 하단 리스트 (드래그 가능 - 화면 전체 너비)
                 VStack(spacing: 0) {
+                    // 드래그 핸들
+                    RoundedRectangle(cornerRadius: 2.5)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 40, height: 5)
+                        .padding(.top, 8)
+                        .padding(.bottom, 4)
                     // 로딩 또는 에러 상태
                     if viewModel.isLoading {
                         VStack {
@@ -131,12 +141,15 @@ struct RestaurantSearchView: View {
                                 ForEach(viewModel.restaurants) { restaurant in
                                     NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
                                         RestaurantSearchCard(restaurant: restaurant)
-                                            .onTapGesture {
-                                                viewModel.selectedRestaurant = restaurant
-                                                viewModel.mapCenter = restaurant.coordinate
-                                            }
                                     }
                                     .buttonStyle(PlainButtonStyle())
+                                    .simultaneousGesture(
+                                        TapGesture().onEnded {
+                                            // 탭 시 지도 중심 이동
+                                            viewModel.selectedRestaurant = restaurant
+                                            viewModel.mapCenter = restaurant.coordinate
+                                        }
+                                    )
 
                                     Divider()
                                         .background(Color(hex: "#EEEEEE"))
@@ -144,13 +157,39 @@ struct RestaurantSearchView: View {
                             }
                             .padding(.top, 12)
                         }
-                        .frame(maxWidth: .infinity, maxHeight: sheetHeight)
+                        .frame(maxWidth: .infinity, maxHeight: sheetHeight - 25)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                 .background(Color.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            isDragging = true
+                            let dragAmount = -value.translation.height  // 위로 드래그하면 양수
+                            let newHeight = sheetHeight + dragAmount
+                            sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
+                        }
+                        .onEnded { value in
+                            isDragging = false
+                            let velocity = -value.predictedEndTranslation.height
+
+                            // 중간 지점
+                            let midHeight = (minSheetHeight + maxSheetHeight) / 2
+
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                if sheetHeight < midHeight {
+                                    // 아래쪽에 가까우면 최소로
+                                    sheetHeight = minSheetHeight
+                                } else {
+                                    // 위쪽에 가까우면 최대로
+                                    sheetHeight = maxSheetHeight
+                                }
+                            }
+                        }
+                )
             }
         }
         .navigationBarHidden(true)
