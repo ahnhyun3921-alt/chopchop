@@ -12,112 +12,155 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
-    @State private var showMap = false
+    @State private var sheetHeight: CGFloat = 200 // 하단 시트 높이
+    @State private var isDragging = false
+
+    let minSheetHeight: CGFloat = 200
+    let maxSheetHeight: CGFloat = 600
 
     var body: some View {
-        NavigationView {
+        ZStack {
+            // 전체 화면 지도
+            KakaoMapView(
+                restaurants: $viewModel.restaurants,
+                selectedRestaurant: $viewModel.selectedRestaurant,
+                currentLocation: locationManager.currentLocation,
+                mapCenter: $viewModel.mapCenter
+            )
+            .edgesIgnoringSafeArea(.all)
+
             VStack(spacing: 0) {
-                // 검색 바
-                SearchBar(text: $searchText, onSearch: {
-                    Task {
-                        await viewModel.searchRestaurants(
-                            keyword: searchText,
-                            location: locationManager.currentLocation
-                        )
-                    }
-                })
-                .padding()
-
-                // 지도/리스트 전환 버튼
-                HStack {
-                    Button(action: { showMap = false }) {
-                        Text("리스트")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(showMap ? .safeEatTextSecondary : .safeEatPrimary)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 20)
-                            .background(showMap ? Color.clear : Color.safeEatPrimaryLight)
-                            .cornerRadius(20)
-                    }
-
-                    Button(action: { showMap = true }) {
-                        Text("지도")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(showMap ? .safeEatPrimary : .safeEatTextSecondary)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 20)
-                            .background(showMap ? Color.safeEatPrimaryLight : Color.clear)
-                            .cornerRadius(20)
-                    }
-
-                    Spacer()
-
-                    // 현재 위치 버튼
-                    Button(action: {
+                // 상단 검색 바 (floating)
+                VStack(spacing: 12) {
+                    SearchBar(text: $searchText, onSearch: {
                         Task {
-                            await viewModel.searchNearbyRestaurants(
+                            await viewModel.searchRestaurants(
+                                keyword: searchText,
                                 location: locationManager.currentLocation
                             )
                         }
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "location.fill")
-                                .font(.system(size: 12))
-                            Text("주변 검색")
-                                .font(.system(size: 13, weight: .medium))
+                    })
+
+                    // 현재 위치 버튼
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            Task {
+                                await viewModel.searchNearbyRestaurants(
+                                    location: locationManager.currentLocation
+                                )
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 13))
+                                Text("주변 검색")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Color.safeEatPrimary)
+                            .cornerRadius(24)
+                            .shadow(color: .black.opacity(0.1), radius: 4, y: 2)
                         }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color.safeEatPrimary)
-                        .cornerRadius(20)
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 12)
+                .padding()
+                .background(Color.white)
+                .shadow(color: .black.opacity(0.08), radius: 8, y: 2)
 
-                Divider()
-                    .background(Color(hex: "#EEEEEE"))
+                Spacer()
 
-                // 로딩 상태
-                if viewModel.isLoading {
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .safeEatPrimary))
-                    Spacer()
-                }
-                // 에러 상태
-                else if let error = viewModel.errorMessage {
-                    Spacer()
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 48))
-                            .foregroundColor(.safeEatTextSecondary)
-                        Text(error)
-                            .font(.system(size: 14))
-                            .foregroundColor(.safeEatTextSecondary)
-                            .multilineTextAlignment(.center)
+                // 하단 리스트 시트
+                VStack(spacing: 0) {
+                    // 드래그 핸들
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: 40, height: 5)
+                        .padding(.top, 12)
+                        .padding(.bottom, 8)
+
+                    // 로딩 또는 에러 상태
+                    if viewModel.isLoading {
+                        VStack {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .safeEatPrimary))
+                                .padding(.top, 40)
+                            Spacer()
+                        }
+                        .frame(height: sheetHeight - 25)
+                    } else if let error = viewModel.errorMessage {
+                        VStack(spacing: 12) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.system(size: 36))
+                                .foregroundColor(.safeEatTextSecondary)
+                            Text(error)
+                                .font(.system(size: 13))
+                                .foregroundColor(.safeEatTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                        .frame(height: sheetHeight - 25)
+                    } else if viewModel.restaurants.isEmpty {
+                        // 검색 결과 없음
+                        VStack(spacing: 12) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 36))
+                                .foregroundColor(.safeEatTextSecondary)
+                            Text("검색 결과가 없습니다")
+                                .font(.system(size: 14))
+                                .foregroundColor(.safeEatTextSecondary)
+                        }
+                        .frame(height: sheetHeight - 25)
+                    } else {
+                        // 리스트
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(viewModel.restaurants) { restaurant in
+                                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
+                                        RestaurantSearchCard(restaurant: restaurant)
+                                            .onTapGesture {
+                                                viewModel.selectedRestaurant = restaurant
+                                                viewModel.mapCenter = restaurant.coordinate
+                                            }
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+
+                                    Divider()
+                                        .background(Color(hex: "#EEEEEE"))
+                                }
+                            }
+                        }
+                        .frame(height: sheetHeight - 25)
                     }
-                    .padding()
-                    Spacer()
                 }
-                // 결과 표시
-                else if showMap {
-                    KakaoMapView(
-                        restaurants: $viewModel.restaurants,
-                        selectedRestaurant: $viewModel.selectedRestaurant,
-                        currentLocation: locationManager.currentLocation
-                    )
-                } else {
-                    RestaurantListView(
-                        restaurants: viewModel.restaurants,
-                        selectedRestaurant: $viewModel.selectedRestaurant
-                    )
-                }
+                .frame(height: sheetHeight)
+                .background(Color.white)
+                .cornerRadius(20, corners: [.topLeft, .topRight])
+                .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            isDragging = true
+                            let newHeight = sheetHeight - value.translation.height
+                            sheetHeight = min(max(newHeight, minSheetHeight), maxSheetHeight)
+                        }
+                        .onEnded { _ in
+                            isDragging = false
+                            // 스냅 효과
+                            withAnimation(.spring()) {
+                                if sheetHeight < (minSheetHeight + maxSheetHeight) / 2 {
+                                    sheetHeight = minSheetHeight
+                                } else {
+                                    sheetHeight = maxSheetHeight
+                                }
+                            }
+                        }
+                )
             }
-            .navigationTitle("식당 검색")
-            .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationBarHidden(true)
         .onAppear {
             locationManager.requestLocation()
 
@@ -131,8 +174,28 @@ struct RestaurantSearchView: View {
     }
 }
 
-// MARK: - Search Bar
+// MARK: - Corner Radius Extension
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
 
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
+    }
+}
+
+// MARK: - Search Bar
 struct SearchBar: View {
     @Binding var text: String
     var onSearch: () -> Void
@@ -141,6 +204,7 @@ struct SearchBar: View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.safeEatTextSecondary)
+                .font(.system(size: 16))
 
             TextField("식당 이름이나 음식 종류를 검색하세요", text: $text)
                 .font(.system(size: 15))
@@ -153,57 +217,18 @@ struct SearchBar: View {
                 Button(action: { text = "" }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.safeEatTextSecondary)
+                        .font(.system(size: 16))
                 }
             }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color.gray.opacity(0.1))
+        .background(Color.gray.opacity(0.08))
         .cornerRadius(12)
     }
 }
 
-// MARK: - Restaurant List View
-
-struct RestaurantListView: View {
-    let restaurants: [Restaurant]
-    @Binding var selectedRestaurant: Restaurant?
-
-    var body: some View {
-        if restaurants.isEmpty {
-            VStack(spacing: 16) {
-                Spacer()
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 48))
-                    .foregroundColor(.safeEatTextSecondary)
-                Text("검색 결과가 없습니다")
-                    .font(.system(size: 16))
-                    .foregroundColor(.safeEatTextSecondary)
-                Text("다른 키워드로 검색해보세요")
-                    .font(.system(size: 14))
-                    .foregroundColor(.safeEatTextSecondary)
-                Spacer()
-            }
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(restaurants) { restaurant in
-                        NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                            RestaurantSearchCard(restaurant: restaurant)
-                        }
-                        .buttonStyle(PlainButtonStyle())
-
-                        Divider()
-                            .background(Color(hex: "#EEEEEE"))
-                    }
-                }
-            }
-        }
-    }
-}
-
 // MARK: - Restaurant Search Card
-
 struct RestaurantSearchCard: View {
     let restaurant: Restaurant
 
@@ -211,44 +236,46 @@ struct RestaurantSearchCard: View {
         HStack(alignment: .top, spacing: 12) {
             // 식당 이미지
             Rectangle()
-                .fill(Color.gray.opacity(0.15))
-                .frame(width: 80, height: 80)
+                .fill(Color.gray.opacity(0.12))
+                .frame(width: 70, height: 70)
                 .cornerRadius(8)
                 .overlay(
                     Image(systemName: "fork.knife")
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.gray.opacity(0.4))
+                        .font(.system(size: 20))
                 )
 
             // 식당 정보
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(restaurant.name)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 15, weight: .semibold))
                     .foregroundColor(.safeEatTextPrimary)
                     .lineLimit(1)
 
                 Text(restaurant.category)
-                    .font(.system(size: 13))
+                    .font(.system(size: 12))
                     .foregroundColor(.safeEatTextSecondary)
 
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
-                        .font(.system(size: 11))
+                        .font(.system(size: 10))
                         .foregroundColor(.safeEatPrimary)
                     Text(String(format: "%.1f", restaurant.rating))
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundColor(.safeEatTextPrimary)
 
                     if !restaurant.distance.isEmpty {
                         Text("•")
+                            .font(.system(size: 10))
                             .foregroundColor(.safeEatTextSecondary)
                         Text(restaurant.distance)
-                            .font(.system(size: 13))
+                            .font(.system(size: 12))
                             .foregroundColor(.safeEatTextSecondary)
                     }
                 }
 
                 Text(restaurant.address)
-                    .font(.system(size: 12))
+                    .font(.system(size: 11))
                     .foregroundColor(.safeEatTextSecondary)
                     .lineLimit(1)
             }
@@ -257,21 +284,21 @@ struct RestaurantSearchCard: View {
 
             // 화살표
             Image(systemName: "chevron.right")
-                .font(.system(size: 14))
+                .font(.system(size: 12))
                 .foregroundColor(.safeEatTextSecondary)
         }
         .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .padding(.vertical, 14)
         .background(Color.white)
     }
 }
 
 // MARK: - View Model
-
 @MainActor
 class RestaurantSearchViewModel: ObservableObject {
     @Published var restaurants: [Restaurant] = []
     @Published var selectedRestaurant: Restaurant?
+    @Published var mapCenter: CLLocationCoordinate2D?
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -284,19 +311,15 @@ class RestaurantSearchViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            // Kakao Local API로 검색
             let response = try await kakaoService.searchKeyword(
                 query: keyword,
                 location: location,
-                radius: 5000,  // 5km 반경
+                radius: 5000,
                 size: 15
             )
 
-            // Restaurant 모델로 변환
             restaurants = response.documents.map { place in
                 var restaurant = place.toRestaurant()
-
-                // 평점 랜덤 생성 (Kakao API는 평점 제공 안 함)
                 restaurant = Restaurant(
                     id: restaurant.id,
                     name: restaurant.name,
@@ -312,13 +335,17 @@ class RestaurantSearchViewModel: ObservableObject {
                     latitude: restaurant.latitude,
                     longitude: restaurant.longitude
                 )
-
                 return restaurant
+            }
+
+            // 검색 결과 첫 번째 위치로 지도 이동
+            if let first = restaurants.first, let coord = first.coordinate {
+                mapCenter = coord
             }
 
             isLoading = false
         } catch {
-            errorMessage = "검색 중 오류가 발생했습니다: \(error.localizedDescription)"
+            errorMessage = "검색 중 오류가 발생했습니다: HTTP 오류: 403"
             isLoading = false
         }
     }
@@ -331,21 +358,18 @@ class RestaurantSearchViewModel: ObservableObject {
 
         isLoading = true
         errorMessage = nil
+        mapCenter = location
 
         do {
-            // Kakao Local API로 주변 식당 검색
             let response = try await kakaoService.searchByCategory(
-                categoryCode: "FD6",  // 음식점
+                categoryCode: "FD6",
                 location: location,
-                radius: 2000,  // 2km 반경
+                radius: 2000,
                 size: 15
             )
 
-            // Restaurant 모델로 변환
             restaurants = response.documents.map { place in
                 var restaurant = place.toRestaurant()
-
-                // 평점 랜덤 생성
                 restaurant = Restaurant(
                     id: restaurant.id,
                     name: restaurant.name,
@@ -361,13 +385,12 @@ class RestaurantSearchViewModel: ObservableObject {
                     latitude: restaurant.latitude,
                     longitude: restaurant.longitude
                 )
-
                 return restaurant
             }
 
             isLoading = false
         } catch {
-            errorMessage = "주변 검색 중 오류가 발생했습니다: \(error.localizedDescription)"
+            errorMessage = "주변 검색 중 오류가 발생했습니다: HTTP 오류: 403"
             isLoading = false
         }
     }
@@ -375,6 +398,8 @@ class RestaurantSearchViewModel: ObservableObject {
 
 struct RestaurantSearchView_Previews: PreviewProvider {
     static var previews: some View {
-        RestaurantSearchView()
+        NavigationView {
+            RestaurantSearchView()
+        }
     }
 }

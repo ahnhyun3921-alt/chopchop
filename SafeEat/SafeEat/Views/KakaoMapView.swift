@@ -15,6 +15,7 @@ struct KakaoMapView: UIViewRepresentable {
     @Binding var restaurants: [Restaurant]
     @Binding var selectedRestaurant: Restaurant?
     var currentLocation: CLLocationCoordinate2D?
+    @Binding var mapCenter: CLLocationCoordinate2D?
 
     func makeUIView(context: Context) -> UIView {
         let containerView = UIView()
