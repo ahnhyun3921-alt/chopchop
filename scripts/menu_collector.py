@@ -510,13 +510,17 @@ def extract_menu_name(line, price_text=None):
         r'\d+\s*천\s*\d*\s*백?\s*원?',  # X천원
         r'\.{2,}',  # 점선
         r'\s{2,}',  # 연속 공백
+        r'[:.\*_\-=]{2,}',  # OCR 오류 패턴 (연속 특수문자)
     ]
 
     for pattern in patterns_to_remove:
         menu_name = re.sub(pattern, ' ', menu_name)
 
+    # OCR 오류 문자 정리
+    menu_name = clean_ocr_text(menu_name)
+
     # 앞뒤 공백 및 특수문자 정리
-    menu_name = menu_name.strip(' .-_:')
+    menu_name = menu_name.strip(' .-_:*')
 
     # 너무 짧거나 숫자만 있으면 무효
     if len(menu_name) < 2 or menu_name.isdigit():
@@ -666,8 +670,34 @@ NON_FOOD_KEYWORDS = [
     "안내", "공지", "메뉴판", "가격표", "menu", "price",
 ]
 
+def clean_ocr_text(text):
+    """OCR 오류 문자 정리"""
+    if not text:
+        return ""
+
+    # 1. 흔한 OCR 오류 패턴 제거
+    # : . * _ - 등이 연속으로 나오는 경우
+    text = re.sub(r'[:.\*_\-=]{2,}', ' ', text)
+
+    # 2. 콜론 뒤의 쓰레기 문자 제거 (예: "당면사리: :.*")
+    text = re.sub(r':\s*[:.\*_\-\s]+', ' ', text)
+
+    # 3. 특수문자로만 이루어진 부분 제거
+    text = re.sub(r'[\*\.\-_:=]{1,}', ' ', text)
+
+    # 4. 연속 공백 정리
+    text = re.sub(r'\s+', ' ', text)
+
+    return text.strip()
+
 def is_valid_food(menu_name):
     """유효한 음식 메뉴인지 확인"""
+    if not menu_name or len(menu_name) < 2:
+        return False
+
+    # OCR 쓰레기 문자 정리
+    menu_name = clean_ocr_text(menu_name)
+
     if not menu_name or len(menu_name) < 2:
         return False
 
@@ -687,6 +717,11 @@ def is_valid_food(menu_name):
 
     # 한글이 하나도 없으면 제외 (영어/숫자만)
     if not any('\uac00' <= c <= '\ud7a3' for c in menu_name):
+        return False
+
+    # 한글 비율이 너무 낮으면 제외 (OCR 오류일 가능성)
+    korean_chars = sum(1 for c in menu_name if '\uac00' <= c <= '\ud7a3')
+    if korean_chars < len(menu_name) * 0.3:  # 한글 30% 미만이면 제외
         return False
 
     return True
