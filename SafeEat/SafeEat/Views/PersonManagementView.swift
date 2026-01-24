@@ -158,16 +158,14 @@ struct PersonCard: View {
                     .background(Color(hex: "#EEEEEE"))
 
                 // 제한 식품 태그
-                FlowLayout(spacing: 8) {
-                    ForEach(person.restrictedIngredients, id: \.self) { ingredient in
-                        Text(ingredient)
-                            .font(.system(size: 13))
-                            .foregroundColor(.safeEatPrimary)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(Color.safeEatPrimary.opacity(0.1))
-                            .cornerRadius(12)
-                    }
+                FlowLayout(data: person.restrictedIngredients, spacing: 8) { ingredient in
+                    Text(ingredient)
+                        .font(.system(size: 13))
+                        .foregroundColor(.safeEatPrimary)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color.safeEatPrimary.opacity(0.1))
+                        .cornerRadius(12)
                 }
             }
         }
