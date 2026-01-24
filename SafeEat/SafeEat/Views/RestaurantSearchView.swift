@@ -12,6 +12,8 @@ struct RestaurantSearchView: View {
     @StateObject private var viewModel = RestaurantSearchViewModel()
     @StateObject private var locationManager = LocationManager()
     @State private var searchText = ""
+    @State private var selectedForNavigation: Restaurant?
+    @State private var isNavigating = false
 
     // 드래그 가능한 리스트 높이
     @State private var sheetHeight: CGFloat = UIScreen.main.bounds.height * 0.3  // 초기 30%
@@ -166,26 +168,39 @@ struct RestaurantSearchView: View {
                         .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                     } else {
                         // 리스트
-                        ScrollView {
-                            LazyVStack(spacing: 0) {
-                                ForEach(viewModel.restaurants) { restaurant in
-                                    NavigationLink(destination: RestaurantDetailView(restaurant: restaurant)) {
-                                        RestaurantSearchCard(restaurant: restaurant)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
-                                    .simultaneousGesture(
-                                        TapGesture().onEnded {
+                        ZStack {
+                            ScrollView {
+                                LazyVStack(spacing: 0) {
+                                    ForEach(viewModel.restaurants) { restaurant in
+                                        Button(action: {
                                             // 지도 중심 이동
                                             viewModel.selectedRestaurant = restaurant
                                             viewModel.mapCenter = restaurant.coordinate
+                                            // 상세 페이지로 이동
+                                            selectedForNavigation = restaurant
+                                            isNavigating = true
+                                        }) {
+                                            RestaurantSearchCard(restaurant: restaurant)
                                         }
-                                    )
+                                        .buttonStyle(PlainButtonStyle())
 
-                                    Divider()
-                                        .background(Color(hex: "#EEEEEE"))
+                                        Divider()
+                                            .background(Color(hex: "#EEEEEE"))
+                                    }
                                 }
+                                .padding(.top, 12)
                             }
-                            .padding(.top, 12)
+
+                            // 숨겨진 NavigationLink
+                            if let selected = selectedForNavigation {
+                                NavigationLink(
+                                    destination: RestaurantDetailView(restaurant: selected),
+                                    isActive: $isNavigating
+                                ) {
+                                    EmptyView()
+                                }
+                                .hidden()
+                            }
                         }
                         .frame(maxWidth: .infinity, maxHeight: sheetHeight - 25)
                     }
