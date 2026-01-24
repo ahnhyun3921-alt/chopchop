@@ -6,172 +6,88 @@
 //
 
 import Foundation
-import FirebaseFirestore
-import FirebaseFirestoreSwift
+// Firebase는 나중에 설치 후 활성화
+// import FirebaseFirestore
+// import FirebaseFirestoreSwift
 
 class FirestoreService {
     static let shared = FirestoreService()
-    private let db = Firestore.firestore()
+    // private let db = Firestore.firestore()
 
     private init() {}
 
-    // MARK: - Favorites
+    // MARK: - Favorites (Firebase 설치 후 활성화)
 
     /// 즐겨찾기 추가
     func addFavorite(userId: String, restaurantId: String) async throws {
-        let favoriteData: [String: Any] = [
-            "restaurantId": restaurantId,
-            "createdAt": Timestamp(date: Date())
-        ]
-
-        try await db.collection("users")
-            .document(userId)
-            .collection("favorites")
-            .document(restaurantId)
-            .setData(favoriteData)
+        // Firebase 설치 전 임시 구현 - UserDefaults 사용
+        var favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
+        if !favorites.contains(restaurantId) {
+            favorites.append(restaurantId)
+            UserDefaults.standard.set(favorites, forKey: "favorites_\(userId)")
+        }
     }
 
     /// 즐겨찾기 제거
     func removeFavorite(userId: String, restaurantId: String) async throws {
-        try await db.collection("users")
-            .document(userId)
-            .collection("favorites")
-            .document(restaurantId)
-            .delete()
+        // Firebase 설치 전 임시 구현 - UserDefaults 사용
+        var favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
+        favorites.removeAll { $0 == restaurantId }
+        UserDefaults.standard.set(favorites, forKey: "favorites_\(userId)")
     }
 
     /// 즐겨찾기 상태 확인
     func isFavorite(userId: String, restaurantId: String) async throws -> Bool {
-        let document = try await db.collection("users")
-            .document(userId)
-            .collection("favorites")
-            .document(restaurantId)
-            .getDocument()
-
-        return document.exists
+        // Firebase 설치 전 임시 구현 - UserDefaults 사용
+        let favorites = UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
+        return favorites.contains(restaurantId)
     }
 
     /// 모든 즐겨찾기 가져오기
     func getFavorites(userId: String) async throws -> [String] {
-        let snapshot = try await db.collection("users")
-            .document(userId)
-            .collection("favorites")
-            .getDocuments()
-
-        return snapshot.documents.map { $0.documentID }
+        // Firebase 설치 전 임시 구현 - UserDefaults 사용
+        return UserDefaults.standard.stringArray(forKey: "favorites_\(userId)") ?? []
     }
 
-    // MARK: - User Persons (제한 식품 관리)
+    // MARK: - User Persons (제한 식품 관리) - Firebase 설치 후 활성화
 
     /// 사용자의 인물 추가
     func addPerson(userId: String, person: Person) async throws {
-        let personData: [String: Any] = [
-            "name": person.name,
-            "restrictedIngredients": person.restrictedIngredients,
-            "createdAt": Timestamp(date: Date())
-        ]
-
-        try await db.collection("users")
-            .document(userId)
-            .collection("persons")
-            .document(person.id)
-            .setData(personData)
+        // Firebase 설치 전 임시 구현 - 로컬에만 저장
+        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 
     /// 사용자의 인물 목록 가져오기
     func getPersons(userId: String) async throws -> [Person] {
-        let snapshot = try await db.collection("users")
-            .document(userId)
-            .collection("persons")
-            .getDocuments()
-
-        return snapshot.documents.compactMap { document in
-            guard let name = document.data()["name"] as? String,
-                  let restrictedIngredients = document.data()["restrictedIngredients"] as? [String] else {
-                return nil
-            }
-            return Person(
-                id: document.documentID,
-                name: name,
-                restrictedIngredients: restrictedIngredients
-            )
-        }
+        // Firebase 설치 전 임시 구현 - 빈 배열 반환
+        // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
+        return []
     }
 
     /// 사용자의 인물 삭제
     func deletePerson(userId: String, personId: String) async throws {
-        try await db.collection("users")
-            .document(userId)
-            .collection("persons")
-            .document(personId)
-            .delete()
+        // Firebase 설치 전 임시 구현
+        // TODO: Firebase 설치 후 Firestore에서 삭제하도록 변경
     }
 
     /// 사용자의 인물 업데이트
     func updatePerson(userId: String, person: Person) async throws {
-        let personData: [String: Any] = [
-            "name": person.name,
-            "restrictedIngredients": person.restrictedIngredients,
-            "updatedAt": Timestamp(date: Date())
-        ]
-
-        try await db.collection("users")
-            .document(userId)
-            .collection("persons")
-            .document(person.id)
-            .updateData(personData)
+        // Firebase 설치 전 임시 구현
+        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 
-    // MARK: - Restaurant Cache (네이버 검색 결과 캐싱)
+    // MARK: - Restaurant Cache (네이버 검색 결과 캐싱) - Firebase 설치 후 활성화
 
     /// 식당 정보 캐시에 저장
     func cacheRestaurant(_ restaurant: Restaurant) async throws {
-        let restaurantData: [String: Any] = [
-            "name": restaurant.name,
-            "category": restaurant.category,
-            "rating": restaurant.rating,
-            "distance": restaurant.distance,
-            "address": restaurant.address,
-            "operatingStatus": restaurant.operatingStatus,
-            "totalMenuCount": restaurant.totalMenuCount,
-            "imageUrl": restaurant.imageUrl as Any,
-            "cachedAt": Timestamp(date: Date())
-        ]
-
-        try await db.collection("restaurants")
-            .document(restaurant.id)
-            .setData(restaurantData, merge: true)
+        // Firebase 설치 전 임시 구현 - 캐싱하지 않음
+        // TODO: Firebase 설치 후 Firestore에 저장하도록 변경
     }
 
     /// 캐시된 식당 정보 가져오기
     func getCachedRestaurant(restaurantId: String) async throws -> Restaurant? {
-        let document = try await db.collection("restaurants")
-            .document(restaurantId)
-            .getDocument()
-
-        guard document.exists,
-              let data = document.data(),
-              let name = data["name"] as? String,
-              let category = data["category"] as? String,
-              let rating = data["rating"] as? Double,
-              let distance = data["distance"] as? String,
-              let address = data["address"] as? String,
-              let operatingStatus = data["operatingStatus"] as? String,
-              let totalMenuCount = data["totalMenuCount"] as? Int else {
-            return nil
-        }
-
-        return Restaurant(
-            id: document.documentID,
-            name: name,
-            category: category,
-            rating: rating,
-            distance: distance,
-            address: address,
-            operatingStatus: operatingStatus,
-            operatingHours: [], // TODO: 영업시간 저장 로직 추가
-            totalMenuCount: totalMenuCount,
-            imageUrl: data["imageUrl"] as? String
-        )
+        // Firebase 설치 전 임시 구현 - nil 반환
+        // TODO: Firebase 설치 후 Firestore에서 가져오도록 변경
+        return nil
     }
 }
