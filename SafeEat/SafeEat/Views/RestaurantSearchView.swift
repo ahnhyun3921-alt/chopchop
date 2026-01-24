@@ -72,7 +72,7 @@ struct RestaurantSearchView: View {
 
                 Spacer()
 
-                // 하단 리스트 (고정)
+                // 하단 리스트 (고정 - 화면 전체 너비)
                 VStack(spacing: 0) {
                     // 로딩 또는 에러 상태
                     if viewModel.isLoading {
@@ -82,7 +82,7 @@ struct RestaurantSearchView: View {
                                 .padding(.top, 40)
                             Spacer()
                         }
-                        .frame(height: sheetHeight)
+                        .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                     } else if let error = viewModel.errorMessage {
                         VStack(spacing: 12) {
                             Image(systemName: "exclamationmark.triangle")
@@ -94,7 +94,7 @@ struct RestaurantSearchView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
                         }
-                        .frame(height: sheetHeight)
+                        .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                     } else if viewModel.restaurants.isEmpty {
                         // 검색 결과 없음 또는 초기 상태
                         VStack(spacing: 16) {
@@ -123,7 +123,7 @@ struct RestaurantSearchView: View {
                                     .multilineTextAlignment(.center)
                             }
                         }
-                        .frame(height: sheetHeight)
+                        .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                     } else {
                         // 리스트
                         ScrollView {
@@ -144,10 +144,10 @@ struct RestaurantSearchView: View {
                             }
                             .padding(.top, 12)
                         }
-                        .frame(height: sheetHeight)
+                        .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                     }
                 }
-                .frame(height: sheetHeight)
+                .frame(maxWidth: .infinity, maxHeight: sheetHeight)
                 .background(Color.white)
                 .cornerRadius(20, corners: [.topLeft, .topRight])
                 .shadow(color: .black.opacity(0.1), radius: 10, y: -2)
