@@ -29,30 +29,36 @@ struct MainTabView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             // 홈 (검색)
-            RestaurantSearchView()
-                .tabItem {
-                    Image(systemName: selectedTab == 0 ? "magnifyingglass.circle.fill" : "magnifyingglass.circle")
-                    Text("검색")
-                }
-                .tag(0)
-                .environmentObject(favoritesViewModel)
+            NavigationView {
+                RestaurantSearchView()
+            }
+            .tabItem {
+                Image(systemName: selectedTab == 0 ? "magnifyingglass.circle.fill" : "magnifyingglass.circle")
+                Text("검색")
+            }
+            .tag(0)
+            .environmentObject(favoritesViewModel)
 
             // 즐겨찾기
-            FavoritesView()
-                .tabItem {
-                    Image(systemName: selectedTab == 1 ? "heart.fill" : "heart")
-                    Text("즐겨찾기")
-                }
-                .tag(1)
-                .environmentObject(favoritesViewModel)
+            NavigationView {
+                FavoritesView()
+            }
+            .tabItem {
+                Image(systemName: selectedTab == 1 ? "heart.fill" : "heart")
+                Text("즐겨찾기")
+            }
+            .tag(1)
+            .environmentObject(favoritesViewModel)
 
             // 인물 관리
-            PersonManagementView()
-                .tabItem {
-                    Image(systemName: selectedTab == 2 ? "person.2.fill" : "person.2")
-                    Text("인물")
-                }
-                .tag(2)
+            NavigationView {
+                PersonManagementView()
+            }
+            .tabItem {
+                Image(systemName: selectedTab == 2 ? "person.2.fill" : "person.2")
+                Text("인물")
+            }
+            .tag(2)
 
             // 프로필
             ProfileView()
