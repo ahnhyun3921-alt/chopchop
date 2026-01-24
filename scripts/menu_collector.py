@@ -523,34 +523,107 @@ def auto_collect_menus(restaurant, location, db, dry_run=False):
 
     # 4. Firestore에 저장 (dry_run이 아닐 때만)
     if unique_menus:
+        # 정렬된 메뉴 미리보기
+        print(f"  📋 수집된 메뉴 ({len(unique_menus)}개, 가격순 정렬):")
+        for menu in unique_menus[:8]:
+            print(f"     {menu['name']}: {menu['price']:,}원")
+        if len(unique_menus) > 8:
+            print(f"     ... 외 {len(unique_menus)-8}개")
+
         if dry_run:
-            print(f"  🧪 [Dry-run] {len(unique_menus)}개 메뉴 발견 (저장 안 함)")
+            print(f"  🧪 [Dry-run] 저장 안 함")
         elif db:
-            print(f"  💾 Firestore에 {len(unique_menus)}개 메뉴 저장 중...")
-            save_menus_to_firestore(unique_menus, db)
-            print(f"  ✅ 저장 완료!")
+            print(f"  💾 Firestore에 저장 중 (중복 체크)...")
+            saved = save_menus_to_firestore(unique_menus, db, restaurant['id'])
+            print(f"  ✅ {saved}개 새 메뉴 저장 완료!")
         else:
-            print(f"  ⚠️  Firebase 미연결, {len(unique_menus)}개 메뉴 저장 안 됨")
+            print(f"  ⚠️  Firebase 미연결, 저장 안 됨")
 
     return unique_menus
 
+def normalize_menu_name(name):
+    """메뉴명 정규화 (중복 비교용)"""
+    # 소문자 변환, 공백/특수문자 제거
+    normalized = re.sub(r'[\s\-\_\.\,\(\)]+', '', name.lower())
+    # 흔한 변형 통일 (ex: 찌개/찌게, 볶음/볶음밥)
+    normalized = normalized.replace('찌게', '찌개')
+    normalized = normalized.replace('뽁음', '볶음')
+    normalized = normalized.replace('비빔밥', '비빔밥')
+    return normalized
+
 def remove_duplicate_menus(menus):
-    """중복 메뉴 제거 (메뉴명 기준)"""
-    seen = set()
-    unique = []
+    """중복 메뉴 제거 + 가격순 정렬"""
+    seen = {}  # {정규화된이름: 메뉴}
+
     for menu in menus:
-        # 정규화: 소문자, 공백 제거
-        normalized_name = re.sub(r'\s+', '', menu['name'].lower())
-        if normalized_name not in seen:
-            seen.add(normalized_name)
-            unique.append(menu)
+        normalized = normalize_menu_name(menu['name'])
+
+        if normalized not in seen:
+            seen[normalized] = menu
+        else:
+            # 이미 있으면, 더 합리적인 가격을 선택 (중간값에 가까운 것)
+            existing = seen[normalized]
+            # 가격이 더 현실적인 범위(3000~50000)에 가까우면 대체
+            existing_score = abs(existing['price'] - 15000)
+            new_score = abs(menu['price'] - 15000)
+            if new_score < existing_score:
+                seen[normalized] = menu
+
+    unique = list(seen.values())
+
+    # 가격순 정렬
+    unique.sort(key=lambda x: x['price'])
+
     return unique
 
-def save_menus_to_firestore(menus, db):
-    """Firestore에 메뉴 저장"""
+def get_existing_menu_names(restaurant_id, db):
+    """Firestore에서 기존 메뉴명 가져오기"""
+    if not db:
+        return set()
+
+    try:
+        menus_ref = db.collection('restaurants').document(restaurant_id).collection('menus')
+        docs = menus_ref.stream()
+        existing = set()
+        for doc in docs:
+            data = doc.to_dict()
+            if 'name' in data:
+                existing.add(normalize_menu_name(data['name']))
+        return existing
+    except Exception as e:
+        debug_log(f"기존 메뉴 조회 실패: {e}")
+        return set()
+
+def save_menus_to_firestore(menus, db, restaurant_id=None):
+    """Firestore에 메뉴 저장 (중복 제외)"""
+    if not menus:
+        return 0
+
+    # 기존 메뉴 가져오기
+    rid = restaurant_id or menus[0]['restaurantId']
+    existing_names = get_existing_menu_names(rid, db)
+
+    saved_count = 0
+    skipped_count = 0
+
     for menu in menus:
+        normalized = normalize_menu_name(menu['name'])
+
+        # 이미 존재하는 메뉴는 건너뛰기
+        if normalized in existing_names:
+            debug_log(f"중복 건너뜀: {menu['name']}")
+            skipped_count += 1
+            continue
+
         doc_ref = db.collection('restaurants').document(menu['restaurantId']).collection('menus').document(menu['id'])
         doc_ref.set(menu)
+        existing_names.add(normalized)  # 방금 저장한 것도 추가
+        saved_count += 1
+
+    if skipped_count > 0:
+        print(f"    ⏭️  {skipped_count}개 중복 메뉴 건너뜀")
+
+    return saved_count
 
 # ==================== 메인 ====================
 
