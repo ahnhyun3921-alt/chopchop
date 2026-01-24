@@ -15,6 +15,7 @@ class RestaurantDetailViewModel: ObservableObject {
     @Published var isOperatingHoursExpanded = false
     @Published var expandedPersonIds: Set<String> = []
     @Published var selectedMenuTab: MenuTab = .safe
+    @Published var isFavorite: Bool = false
 
     var totalSafeMenuCount: Int {
         safeMenuInfos.reduce(0) { $0 + $1.safeMenuCount }
@@ -24,6 +25,23 @@ class RestaurantDetailViewModel: ObservableObject {
         self.restaurant = restaurant
         self.selectedPersons = selectedPersons
         self.safeMenuInfos = Self.calculateSafeMenus(for: selectedPersons, restaurant: restaurant)
+        self.isFavorite = Self.loadFavoriteStatus(restaurantId: restaurant.id)
+    }
+
+    // 하트 토글
+    func toggleFavorite() {
+        isFavorite.toggle()
+        Self.saveFavoriteStatus(restaurantId: restaurant.id, isFavorite: isFavorite)
+    }
+
+    // UserDefaults에서 즐겨찾기 상태 불러오기
+    private static func loadFavoriteStatus(restaurantId: String) -> Bool {
+        return UserDefaults.standard.bool(forKey: "favorite_\(restaurantId)")
+    }
+
+    // UserDefaults에 즐겨찾기 상태 저장
+    private static func saveFavoriteStatus(restaurantId: String, isFavorite: Bool) {
+        UserDefaults.standard.set(isFavorite, forKey: "favorite_\(restaurantId)")
     }
 
     func toggleOperatingHours() {

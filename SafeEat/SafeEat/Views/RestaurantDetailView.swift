@@ -13,7 +13,12 @@ struct RestaurantDetailView: View {
     var body: some View {
         VStack(spacing: 0) {
             // 네비게이션 바
-            NavigationBar(restaurantName: viewModel.restaurant.name, category: viewModel.restaurant.category)
+            NavigationBar(
+                restaurantName: viewModel.restaurant.name,
+                category: viewModel.restaurant.category,
+                isFavorite: viewModel.isFavorite,
+                onFavoriteToggle: { viewModel.toggleFavorite() }
+            )
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -59,6 +64,8 @@ struct RestaurantDetailView: View {
 struct NavigationBar: View {
     let restaurantName: String
     let category: String
+    let isFavorite: Bool
+    let onFavoriteToggle: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -82,11 +89,11 @@ struct NavigationBar: View {
 
             Spacer()
 
-            // 하트
-            Button(action: {}) {
-                Image(systemName: "heart")
+            // 하트 - 즐겨찾기 토글
+            Button(action: onFavoriteToggle) {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
                     .font(.system(size: 18))
-                    .foregroundColor(.safeEatTextSecondary)
+                    .foregroundColor(isFavorite ? .safeEatPrimary : .safeEatTextSecondary)
             }
 
             // 전화 버튼
