@@ -276,7 +276,7 @@ class RestaurantSearchViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let searchService = NaverSearchService.shared
+    private let kakaoService = KakaoLocalService.shared
 
     func searchRestaurants(keyword: String, location: CLLocationCoordinate2D?) async {
         guard !keyword.isEmpty else { return }
@@ -285,16 +285,34 @@ class RestaurantSearchViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let places = try await searchService.searchRestaurants(
+            // Kakao Local API로 검색
+            let response = try await kakaoService.searchKeyword(
                 query: keyword,
-                location: location
+                location: location,
+                radius: 5000,  // 5km 반경
+                size: 15
             )
 
-            restaurants = places.map { $0.toRestaurant() }
+            // Restaurant 모델로 변환
+            restaurants = response.documents.map { place in
+                var restaurant = place.toRestaurant()
 
-            // 거리 계산 (위치가 있는 경우)
-            if let currentLocation = location {
-                calculateDistances(from: currentLocation)
+                // 평점 랜덤 생성 (Kakao API는 평점 제공 안 함)
+                restaurant = Restaurant(
+                    id: restaurant.id,
+                    name: restaurant.name,
+                    category: restaurant.category,
+                    rating: Double.random(in: 3.5...4.9),
+                    distance: restaurant.distance,
+                    address: restaurant.address,
+                    operatingStatus: restaurant.operatingStatus,
+                    operatingHours: restaurant.operatingHours,
+                    totalMenuCount: restaurant.totalMenuCount,
+                    imageUrl: restaurant.imageUrl,
+                    phoneNumber: restaurant.phoneNumber
+                )
+
+                return restaurant
             }
 
             isLoading = false
@@ -314,53 +332,40 @@ class RestaurantSearchViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let places = try await searchService.searchNearbyRestaurants(
-                keyword: "맛집",
-                location: location
+            // Kakao Local API로 주변 식당 검색
+            let response = try await kakaoService.searchByCategory(
+                categoryCode: "FD6",  // 음식점
+                location: location,
+                radius: 2000,  // 2km 반경
+                size: 15
             )
 
-            restaurants = places.map { $0.toRestaurant() }
-            calculateDistances(from: location)
+            // Restaurant 모델로 변환
+            restaurants = response.documents.map { place in
+                var restaurant = place.toRestaurant()
+
+                // 평점 랜덤 생성
+                restaurant = Restaurant(
+                    id: restaurant.id,
+                    name: restaurant.name,
+                    category: restaurant.category,
+                    rating: Double.random(in: 3.5...4.9),
+                    distance: restaurant.distance,
+                    address: restaurant.address,
+                    operatingStatus: restaurant.operatingStatus,
+                    operatingHours: restaurant.operatingHours,
+                    totalMenuCount: restaurant.totalMenuCount,
+                    imageUrl: restaurant.imageUrl,
+                    phoneNumber: restaurant.phoneNumber
+                )
+
+                return restaurant
+            }
 
             isLoading = false
         } catch {
             errorMessage = "주변 검색 중 오류가 발생했습니다: \(error.localizedDescription)"
             isLoading = false
-        }
-    }
-
-    private func calculateDistances(from location: CLLocationCoordinate2D) {
-        // TODO: 실제 거리 계산 구현
-        // 임시로 랜덤 거리 할당
-        for index in restaurants.indices {
-            let distance = Int.random(in: 100...1500)
-            if distance < 1000 {
-                restaurants[index] = Restaurant(
-                    id: restaurants[index].id,
-                    name: restaurants[index].name,
-                    category: restaurants[index].category,
-                    rating: Double.random(in: 3.5...4.9),
-                    distance: "\(distance)m",
-                    address: restaurants[index].address,
-                    operatingStatus: restaurants[index].operatingStatus,
-                    operatingHours: restaurants[index].operatingHours,
-                    totalMenuCount: restaurants[index].totalMenuCount,
-                    imageUrl: restaurants[index].imageUrl
-                )
-            } else {
-                restaurants[index] = Restaurant(
-                    id: restaurants[index].id,
-                    name: restaurants[index].name,
-                    category: restaurants[index].category,
-                    rating: Double.random(in: 3.5...4.9),
-                    distance: String(format: "%.1fkm", Double(distance) / 1000.0),
-                    address: restaurants[index].address,
-                    operatingStatus: restaurants[index].operatingStatus,
-                    operatingHours: restaurants[index].operatingHours,
-                    totalMenuCount: restaurants[index].totalMenuCount,
-                    imageUrl: restaurants[index].imageUrl
-                )
-            }
         }
     }
 }

@@ -23,6 +23,7 @@ struct RestaurantDetailView: View {
                 restaurantName: viewModel.restaurant.name,
                 category: viewModel.restaurant.category,
                 isFavorite: viewModel.isFavorite,
+                phoneNumber: viewModel.restaurant.phoneNumber,
                 onFavoriteToggle: { viewModel.toggleFavorite() }
             )
 
@@ -71,6 +72,7 @@ struct NavigationBar: View {
     let restaurantName: String
     let category: String
     let isFavorite: Bool
+    let phoneNumber: String?
     let onFavoriteToggle: () -> Void
 
     var body: some View {
@@ -103,18 +105,26 @@ struct NavigationBar: View {
             }
 
             // 전화 버튼
-            Button(action: {}) {
-                HStack(spacing: 4) {
-                    Image(systemName: "phone.fill")
-                        .font(.system(size: 11))
-                    Text("전화")
-                        .font(.system(size: 13, weight: .medium))
+            if let phoneNumber = phoneNumber, !phoneNumber.isEmpty {
+                Button(action: {
+                    // 전화 걸기
+                    let cleanedNumber = phoneNumber.replacingOccurrences(of: "-", with: "")
+                    if let url = URL(string: "tel://\(cleanedNumber)") {
+                        UIApplication.shared.open(url)
+                    }
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "phone.fill")
+                            .font(.system(size: 11))
+                        Text("전화")
+                            .font(.system(size: 13, weight: .medium))
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Color.safeEatPrimary)
+                    .cornerRadius(20)
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Color.safeEatPrimary)
-                .cornerRadius(20)
             }
         }
         .padding(.horizontal, 20)

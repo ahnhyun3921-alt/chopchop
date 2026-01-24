@@ -18,6 +18,7 @@ struct Restaurant: Identifiable {
     let operatingHours: [DayOperatingHours]
     let totalMenuCount: Int
     let imageUrl: String?
+    let phoneNumber: String?  // 전화번호 추가
 
     static let sample = Restaurant(
         id: "1",
@@ -37,7 +38,8 @@ struct Restaurant: Identifiable {
             DayOperatingHours(day: "일", hours: "09:00 - 18:00", breakTime: nil, lastOrder: "17:00 라스트오더")
         ],
         totalMenuCount: 33,
-        imageUrl: nil
+        imageUrl: nil,
+        phoneNumber: "02-1234-5678"
     )
 }
 
