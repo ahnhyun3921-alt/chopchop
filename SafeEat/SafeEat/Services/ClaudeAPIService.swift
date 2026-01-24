@@ -10,10 +10,8 @@ import Foundation
 class ClaudeAPIService {
     static let shared = ClaudeAPIService()
 
-    // Claude API Key (Anthropic)
-    // TODO: .env 파일의 CLAUDE_API_KEY 값으로 교체하거나 환경 변수에서 읽어오기
-    // 현재는 직접 입력: sk-ant-api03-f_wMXvhP5f4r... (보안상 전체 키는 코드에 포함하지 않음)
-    private let apiKey = "YOUR_CLAUDE_API_KEY_HERE"
+    // Claude API Key (Config.swift에서 가져옴)
+    private let apiKey = Config.claudeAPIKey
     private let apiURL = "https://api.anthropic.com/v1/messages"
     private let model = "claude-3-5-haiku-20241022"
     private let apiVersion = "2023-06-01"

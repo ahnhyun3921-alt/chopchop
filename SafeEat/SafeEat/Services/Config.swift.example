@@ -1,0 +1,24 @@
+//
+//  Config.swift.example
+//  SafeEat
+//
+//  Created by Claude on 2026-01-24.
+//
+//  사용 방법:
+//  1. 이 파일을 Config.swift로 복사
+//  2. 각 API 키를 실제 값으로 교체
+//  3. Config.swift는 .gitignore에 포함되어 Git에 업로드되지 않습니다
+//
+
+import Foundation
+
+struct Config {
+    // Claude API Key
+    // https://console.anthropic.com/에서 발급
+    static let claudeAPIKey = "YOUR_CLAUDE_API_KEY"
+
+    // Naver API Keys
+    // https://console.ncloud.com/에서 발급
+    static let naverClientId = "YOUR_NAVER_CLIENT_ID"
+    static let naverClientSecret = "YOUR_NAVER_CLIENT_SECRET"
+}

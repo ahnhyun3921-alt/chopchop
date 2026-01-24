@@ -92,6 +92,9 @@ iOSInjectionProject/
 # Environment Variables
 .env
 
+# API Keys Configuration
+SafeEat/SafeEat/Services/Config.swift
+
 # Firebase
 GoogleService-Info.plist
 
