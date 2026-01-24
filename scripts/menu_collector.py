@@ -315,6 +315,10 @@ def extract_text_tesseract(image):
 
 # ==================== 메뉴 파싱 (개선된 버전) ====================
 
+def format_price(price):
+    """가격을 통일된 형식으로 포맷 (예: 8000 → "8,000원")"""
+    return f"{price:,}원"
+
 def parse_price(text):
     """다양한 가격 형식을 파싱
 
@@ -433,6 +437,7 @@ def parse_menus(text, restaurant_id):
                     "restaurantId": restaurant_id,
                     "name": menu_name,
                     "price": price,
+                    "priceText": format_price(price),  # "8,000원" 형식
                     "ingredients": ingredients,
                     "createdAt": datetime.now()
                 }
@@ -507,7 +512,7 @@ def auto_collect_menus(restaurant, location, db, dry_run=False):
         if menus:
             print(f"    ✅ {len(menus)}개 메뉴 발견")
             for menu in menus[:5]:  # 처음 5개만 미리보기
-                print(f"       - {menu['name']}: {menu['price']:,}원")
+                print(f"       - {menu['name']}: {format_price(menu['price'])}")
             if len(menus) > 5:
                 print(f"       ... 외 {len(menus)-5}개")
             all_menus.extend(menus)
@@ -526,7 +531,7 @@ def auto_collect_menus(restaurant, location, db, dry_run=False):
         # 정렬된 메뉴 미리보기
         print(f"  📋 수집된 메뉴 ({len(unique_menus)}개, 가격순 정렬):")
         for menu in unique_menus[:8]:
-            print(f"     {menu['name']}: {menu['price']:,}원")
+            print(f"     {menu['name']}: {format_price(menu['price'])}")
         if len(unique_menus) > 8:
             print(f"     ... 외 {len(unique_menus)-8}개")
 
