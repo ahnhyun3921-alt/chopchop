@@ -508,19 +508,13 @@ def extract_menu_name(line, price_text=None):
         r'₩?\s*[0-9][0-9,\.]+\s*원?',  # 가격
         r'\d+\s*만\s*\d*\s*천?\s*원?',  # X만원
         r'\d+\s*천\s*\d*\s*백?\s*원?',  # X천원
-        r'\.{2,}',  # 점선
-        r'\s{2,}',  # 연속 공백
-        r'[:.\*_\-=]{2,}',  # OCR 오류 패턴 (연속 특수문자)
     ]
 
     for pattern in patterns_to_remove:
-        menu_name = re.sub(pattern, ' ', menu_name)
+        menu_name = re.sub(pattern, '', menu_name)
 
-    # OCR 오류 문자 정리
+    # OCR 오류 문자 정리 (특수문자 모두 제거)
     menu_name = clean_ocr_text(menu_name)
-
-    # 앞뒤 공백 및 특수문자 정리
-    menu_name = menu_name.strip(' .-_:*')
 
     # 너무 짧거나 숫자만 있으면 무효
     if len(menu_name) < 2 or menu_name.isdigit():
@@ -675,17 +669,10 @@ def clean_ocr_text(text):
     if not text:
         return ""
 
-    # 1. 흔한 OCR 오류 패턴 제거
-    # : . * _ - 등이 연속으로 나오는 경우
-    text = re.sub(r'[:.\*_\-=]{2,}', ' ', text)
+    # 1. 특수문자 모두 제거 (한글, 영문, 숫자, 공백만 유지)
+    text = re.sub(r'[^\w\s가-힣a-zA-Z0-9]', '', text)
 
-    # 2. 콜론 뒤의 쓰레기 문자 제거 (예: "당면사리: :.*")
-    text = re.sub(r':\s*[:.\*_\-\s]+', ' ', text)
-
-    # 3. 특수문자로만 이루어진 부분 제거
-    text = re.sub(r'[\*\.\-_:=]{1,}', ' ', text)
-
-    # 4. 연속 공백 정리
+    # 2. 연속 공백 정리
     text = re.sub(r'\s+', ' ', text)
 
     return text.strip()
