@@ -11,25 +11,22 @@ struct RestaurantDetailView: View {
     @StateObject private var viewModel = RestaurantDetailViewModel()
 
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
+        VStack(spacing: 0) {
+            // 네비게이션 바
+            NavigationBar(restaurantName: viewModel.restaurant.name, category: viewModel.restaurant.category)
 
             ScrollView {
                 VStack(spacing: 0) {
                     // 이미지 갤러리
-                    ZStack(alignment: .top) {
-                        ImageGallery()
-                    }
-                    .frame(height: 280)
+                    ImageGallery()
 
                     // 위치 정보
                     LocationSection(
-                            rating: viewModel.restaurant.rating,
-                            distance: viewModel.restaurant.distance
-                        )
-                        .padding(.horizontal, 20)
-                        .padding(.top, 16)
-                        .background(Color.white)
+                        rating: viewModel.restaurant.rating,
+                        distance: viewModel.restaurant.distance
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
 
                     // 영업시간
                     OperatingHoursSection(
@@ -39,7 +36,6 @@ struct RestaurantDetailView: View {
                     )
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
-                    .background(Color.white)
 
                     Divider()
                         .background(Color(hex: "F5F5F5"))
@@ -48,17 +44,10 @@ struct RestaurantDetailView: View {
                     // 메뉴 섹션
                     MenuSection(viewModel: viewModel)
                         .padding(.top, 20)
-                        .background(Color.white)
                 }
             }
-            .background(Color.white)
-
-            // 네비게이션 바 - 이미지 위에 겹침
-            VStack(spacing: 0) {
-                NavigationBar(restaurantName: viewModel.restaurant.name, category: viewModel.restaurant.category)
-                Spacer()
-            }
         }
+        .background(Color.white)
         .navigationBarHidden(true)
     }
 }
@@ -114,29 +103,26 @@ struct NavigationBar: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .background(Color.white.opacity(0.0))
+        .background(Color.white)
     }
 }
 
 // MARK: - Image Gallery
 struct ImageGallery: View {
     var body: some View {
-        GeometryReader { geometry in
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
-                ForEach(0..<4) { index in
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(1, contentMode: .fill)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.gray.opacity(0.3))
-                        )
-                }
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 0) {
+            ForEach(0..<4) { index in
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .aspectRatio(1, contentMode: .fill)
+                    .overlay(
+                        Image(systemName: "photo")
+                            .font(.system(size: 30))
+                            .foregroundColor(.gray.opacity(0.3))
+                    )
             }
-            .frame(height: 280 + geometry.safeAreaInsets.top)
-            .offset(y: -geometry.safeAreaInsets.top)
         }
+        .frame(height: 280)
     }
 }
 
