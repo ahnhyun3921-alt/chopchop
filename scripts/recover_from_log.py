@@ -109,10 +109,12 @@ def parse_log_file(log_path):
     return restaurants
 
 def save_to_firebase(restaurants, db):
-    """Firebase에 저장"""
+    """Firebase에 저장 (속도 제한 포함)"""
+    import time
     total_menus = 0
+    batch_count = 0
 
-    for rest in restaurants:
+    for i, rest in enumerate(restaurants):
         if not rest['menus']:
             continue
 
@@ -142,8 +144,17 @@ def save_to_firebase(restaurants, db):
                 'createdAt': datetime.now()
             })
             total_menus += 1
+            batch_count += 1
 
-        print(f"✅ {rest['name']}: {len(rest['menus'])}개 메뉴")
+            # 50개마다 1초 대기 (속도 제한)
+            if batch_count >= 50:
+                time.sleep(1)
+                batch_count = 0
+
+        print(f"[{i+1}/{len(restaurants)}] ✅ {rest['name']}: {len(rest['menus'])}개 메뉴")
+
+        # 식당마다 0.5초 대기
+        time.sleep(0.5)
 
     return total_menus
 
