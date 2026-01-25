@@ -10,12 +10,23 @@ import re
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-def is_garbage(name):
+def is_garbage(name, price=0):
     """쓰레기 데이터인지 확인"""
 
     # 너무 짧음
     if len(name.strip()) < 2:
         return True, "너무 짧음"
+
+    # 이상한 가격
+    if price < 500:
+        return True, f"가격 너무 낮음 ({price}원)"
+    if price > 500000:
+        return True, f"가격 너무 높음 ({price}원)"
+
+    # 가격이 이상한 패턴 (1,992원, 1,508원 등 OCR 오류)
+    if price % 1000 not in [0, 500] and price < 5000:
+        if price % 100 not in [0]:
+            return True, f"가격 패턴 이상 ({price}원)"
 
     # 특수문자로 시작
     if re.match(r'^[☆★●○◎◇◆□■△▲▽▼→←↑↓\(\)\[\]\{\}<>]', name):
@@ -47,12 +58,17 @@ def is_garbage(name):
 
 def clean_menu_name(name):
     """메뉴명 정리"""
+    # 앞 번호 제거 (1. 김치찌개 → 김치찌개)
+    name = re.sub(r'^\s*\d+[\.\)\-\s]+', '', name)
+    name = re.sub(r'^\s*[①②③④⑤⑥⑦⑧⑨⑩]\s*', '', name)
+    name = re.sub(r'^\s*[ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ][\.\)\-\s]+', '', name)
+
     # OCR 쓰레기 제거
     name = re.sub(r'\s*g\s*g\s*', '', name)
     name = re.sub(r'\s*g\s*\)', '', name)
     name = re.sub(r'\s*HP\s*$', '', name)
     name = re.sub(r'\s*•\s*', '', name)
-    name = re.sub(r'[☆★●○]', '', name)
+    name = re.sub(r'[☆★●○◎◇◆□■]', '', name)
     name = re.sub(r'\s+', ' ', name)
     return name.strip()
 
@@ -91,7 +107,7 @@ def main():
             menu_name = menu_data.get('name', '')
             price = menu_data.get('price', 0)
 
-            is_bad, reason = is_garbage(menu_name)
+            is_bad, reason = is_garbage(menu_name, price)
 
             all_menus.append({
                 'rest_ref': rest.reference,
