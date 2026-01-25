@@ -529,8 +529,11 @@ def extract_menu_name(line, price_text=None):
 
 def parse_menus_with_ai(text, restaurant_id, restaurant_name="", category=""):
     """Claude API로 OCR 텍스트에서 메뉴 추출 (더 정확함)"""
-    if not CLAUDE_AVAILABLE or not CLAUDE_API_KEY:
-        debug_log("Claude API 사용 불가, 기본 파싱 사용")
+    if not CLAUDE_AVAILABLE:
+        print("    ⚠️  anthropic 패키지 미설치 (pip install anthropic)")
+        return None
+    if not CLAUDE_API_KEY:
+        print("    ⚠️  ANTHROPIC_API_KEY 환경변수 없음")
         return None
 
     try:
@@ -768,9 +771,13 @@ def parse_menus(text, restaurant_id, restaurant_name="", category=""):
 
     # AI 파싱 사용 (옵션)
     if USE_AI_PARSING:
+        print("    🤖 AI로 메뉴 파싱 중...")
         ai_result = parse_menus_with_ai(text, restaurant_id, restaurant_name, category)
         if ai_result:
+            print(f"    ✅ AI가 {len(ai_result)}개 메뉴 추출")
             return ai_result
+        else:
+            print("    ⚠️  AI 파싱 실패, 기본 파싱 사용")
 
     # 오타 교정
     text = correct_typos(text)
