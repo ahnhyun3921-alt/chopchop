@@ -64,7 +64,7 @@ SEARCH_KEYWORDS = ["맛집", "식당", "음식점"]
 # 각 검색당 가져올 식당 수 (최대)
 RESTAURANTS_PER_SEARCH = 45  # 카카오 API 최대치
 
-def run_collector(location, limit, dry_run=False):
+def run_collector(location, limit, dry_run=False, use_ai=False):
     """menu_collector.py 실행"""
     cmd = [
         sys.executable,
@@ -75,6 +75,9 @@ def run_collector(location, limit, dry_run=False):
 
     if dry_run:
         cmd.append("--dry-run")
+
+    if use_ai:
+        cmd.append("--ai")
 
     try:
         result = subprocess.run(cmd, capture_output=False, text=True, timeout=600)
@@ -120,6 +123,7 @@ def main():
     parser.add_argument('--dry-run', action='store_true', help='테스트 모드')
     parser.add_argument('--quick', action='store_true', help='빠른 모드 (동 + 맛집만)')
     parser.add_argument('--limit', type=int, default=0, help='검색 횟수 제한 (0=무제한)')
+    parser.add_argument('--ai', action='store_true', help='AI로 메뉴 파싱 (Claude API 사용)')
     args = parser.parse_args()
 
     start_time = datetime.now()
@@ -146,6 +150,8 @@ def main():
         print("🧪 테스트 모드 (저장 안 함)")
     if args.quick:
         print("⚡ 빠른 모드")
+    if args.ai:
+        print("🤖 AI 모드 (Claude API 사용)")
     print("=" * 70)
     print("\n처음 10개 검색어:")
     for s in searches[:10]:
@@ -166,7 +172,7 @@ def main():
         print(f"[{i}/{len(searches)}] 🔍 검색: {search_query}")
         print(f"{'='*60}")
 
-        success = run_collector(search_query, RESTAURANTS_PER_SEARCH, args.dry_run)
+        success = run_collector(search_query, RESTAURANTS_PER_SEARCH, args.dry_run, args.ai)
 
         if success:
             success_count += 1
