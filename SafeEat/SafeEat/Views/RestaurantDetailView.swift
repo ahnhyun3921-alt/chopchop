@@ -36,9 +36,6 @@ struct RestaurantDetailView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    // 이미지 갤러리
-                    ImageGallery()
-
                     // 위치 정보 - 흰색 배경으로 완전 분리
                     VStack(spacing: 0) {
                         LocationSection(
@@ -137,59 +134,6 @@ struct NavigationBar: View {
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
         .background(Color.white)
-    }
-}
-
-// MARK: - Image Gallery
-struct ImageGallery: View {
-    var body: some View {
-        GeometryReader { geometry in
-            let width = geometry.size.width
-            let imageSize = width / 2
-
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: imageSize, height: imageSize)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.gray.opacity(0.3))
-                        )
-
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: imageSize, height: imageSize)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.gray.opacity(0.3))
-                        )
-                }
-
-                HStack(spacing: 0) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: imageSize, height: imageSize)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.gray.opacity(0.3))
-                        )
-
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: imageSize, height: imageSize)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .font(.system(size: 30))
-                                .foregroundColor(.gray.opacity(0.3))
-                        )
-                }
-            }
-        }
-        .frame(height: 280)
     }
 }
 
@@ -436,42 +380,27 @@ struct MenuCard: View {
     let menu: Menu
 
     var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            // 메뉴 이미지
-            Rectangle()
-                .fill(Color.gray.opacity(0.15))
-                .frame(width: 90, height: 90)
-                .cornerRadius(8)
-                .overlay(
-                    Image(systemName: "fork.knife")
-                        .font(.system(size: 24))
-                        .foregroundColor(.gray.opacity(0.3))
-                )
+        VStack(alignment: .leading, spacing: 8) {
+            Text(menu.name)
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(.safeEatTextPrimary)
 
-            // 메뉴 정보
-            VStack(alignment: .leading, spacing: 8) {
-                Text(menu.name)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundColor(.safeEatTextPrimary)
+            Text("\(menu.price.formatted())원")
+                .font(.system(size: 14))
+                .foregroundColor(.safeEatTextPrimary)
 
-                Text("\(menu.price.formatted())원")
-                    .font(.system(size: 14))
-                    .foregroundColor(.safeEatTextPrimary)
-
-                // 확률 태그들 - 가로 스크롤
-                if !menu.probabilityTags.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 6) {
-                            ForEach(menu.probabilityTags, id: \.self) { tag in
-                                ProbabilityTag(text: tag)
-                            }
+            // 확률 태그들 - 가로 스크롤
+            if !menu.probabilityTags.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(menu.probabilityTags, id: \.self) { tag in
+                            ProbabilityTag(text: tag)
                         }
                     }
                 }
             }
-
-            Spacer(minLength: 0)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
