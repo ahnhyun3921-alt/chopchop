@@ -108,14 +108,34 @@ def parse_log_file(log_path):
 
     return restaurants
 
+def get_existing_restaurants(db):
+    """이미 저장된 식당 이름 목록 가져오기"""
+    existing = set()
+    for doc in db.collection('restaurants').stream():
+        name = doc.to_dict().get('name', '')
+        if name:
+            existing.add(name.strip().lower())
+    return existing
+
 def save_to_firebase(restaurants, db):
-    """Firebase에 저장 (속도 제한 포함)"""
+    """Firebase에 저장 (속도 제한 + 중복 체크 포함)"""
     import time
     total_menus = 0
     batch_count = 0
+    skipped = 0
+
+    # 기존 식당 목록 가져오기
+    print("📋 기존 식당 확인 중...")
+    existing = get_existing_restaurants(db)
+    print(f"   이미 저장된 식당: {len(existing)}개")
 
     for i, rest in enumerate(restaurants):
         if not rest['menus']:
+            continue
+
+        # 중복 체크
+        if rest['name'].strip().lower() in existing:
+            skipped += 1
             continue
 
         # 식당 ID 생성
@@ -155,6 +175,9 @@ def save_to_firebase(restaurants, db):
 
         # 식당마다 0.5초 대기
         time.sleep(0.5)
+
+    if skipped > 0:
+        print(f"\n⏭️  {skipped}개 중복 식당 건너뜀")
 
     return total_menus
 
