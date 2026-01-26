@@ -36,18 +36,21 @@ class RestaurantDetailViewModel: ObservableObject {
 
         do {
             // 먼저 식당 이름으로 검색 (카카오 ID와 Firebase ID가 다를 수 있음)
-            var menus = try await FirestoreService.shared.getMenusByRestaurantName(name: restaurant.name)
+            let fetchedMenus = try await FirestoreService.shared.getMenusByRestaurantName(name: restaurant.name)
 
             // 이름 검색 실패시 ID로 시도
-            if menus.isEmpty {
-                menus = try await FirestoreService.shared.getMenus(restaurantId: restaurant.id)
+            let finalMenus: [Menu]
+            if fetchedMenus.isEmpty {
+                finalMenus = try await FirestoreService.shared.getMenus(restaurantId: restaurant.id)
+            } else {
+                finalMenus = fetchedMenus
             }
 
             await MainActor.run {
-                self.allMenus = menus
-                self.safeMenuInfos = self.calculateSafeMenusFromFirebase(for: selectedPersons, menus: menus)
+                self.allMenus = finalMenus
+                self.safeMenuInfos = self.calculateSafeMenusFromFirebase(for: selectedPersons, menus: finalMenus)
                 self.isLoading = false
-                print("메뉴 로드 성공: \(menus.count)개")
+                print("메뉴 로드 성공: \(finalMenus.count)개")
             }
         } catch {
             print("메뉴 로드 실패: \(error.localizedDescription)")
