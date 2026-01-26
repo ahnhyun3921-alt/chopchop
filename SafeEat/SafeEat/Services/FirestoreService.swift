@@ -105,6 +105,43 @@ class FirestoreService {
         return snapshot.documents.compactMap { try? $0.data(as: Menu.self) }
     }
 
+    /// 식당 이름으로 메뉴 검색 (카카오 검색 결과와 매칭용)
+    func getMenusByRestaurantName(name: String) async throws -> [Menu] {
+        // 식당 이름으로 검색
+        let snapshot = try await db.collection("restaurants")
+            .whereField("name", isEqualTo: name)
+            .limit(to: 1)
+            .getDocuments()
+
+        guard let restaurantDoc = snapshot.documents.first else {
+            // 정확한 이름 매칭 실패시 부분 일치 검색 시도
+            return try await searchMenusByPartialName(name: name)
+        }
+
+        let restaurantId = restaurantDoc.documentID
+        return try await getMenus(restaurantId: restaurantId)
+    }
+
+    /// 부분 이름 매칭으로 메뉴 검색
+    private func searchMenusByPartialName(name: String) async throws -> [Menu] {
+        // 이름에서 지점명 제거하고 검색 (예: "배스킨라빈스 안양평촌홈플러스점" -> "배스킨라빈스")
+        let baseName = name.components(separatedBy: " ").first ?? name
+
+        let snapshot = try await db.collection("restaurants")
+            .getDocuments()
+
+        // 이름이 포함된 식당 찾기
+        for doc in snapshot.documents {
+            if let docName = doc.data()["name"] as? String,
+               docName.contains(baseName) || baseName.contains(docName.components(separatedBy: " ").first ?? "") {
+                let restaurantId = doc.documentID
+                return try await getMenus(restaurantId: restaurantId)
+            }
+        }
+
+        return []
+    }
+
     /// 메뉴 삭제
     func deleteMenu(restaurantId: String, menuId: String) async throws {
         let docRef = db.collection("restaurants")
