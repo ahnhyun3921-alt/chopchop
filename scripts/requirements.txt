@@ -22,3 +22,7 @@ requests>=2.31.0
 # 앱 리뷰 크롤링
 google-play-scraper>=1.2.4
 app-store-scraper>=0.3.5
+
+# 웹 크롤링
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
