@@ -53,7 +53,7 @@ struct RestaurantSearchView: View {
                         Button(action: {
                             Task {
                                 await viewModel.searchNearbyRestaurants(
-                                    location: locationManager.currentLocation
+                                    location: locationManager.currentLocation ?? RestaurantSearchViewModel.defaultLocation
                                 )
                             }
                         }) {
@@ -139,26 +139,18 @@ struct RestaurantSearchView: View {
                     } else if viewModel.restaurants.isEmpty {
                         // 검색 결과 없음 또는 초기 상태
                         VStack(spacing: 16) {
-                            if locationManager.currentLocation == nil && !viewModel.hasSearched {
-                                // 위치 정보 로딩 중
+                            if !viewModel.hasSearched {
+                                // 로딩 중
                                 ProgressView()
                                     .progressViewStyle(CircularProgressViewStyle(tint: .safeEatPrimary))
-                                Text("위치 정보를 불러오는 중...")
+                                Text("주변 식당을 찾는 중...")
                                     .font(.system(size: 14))
                                     .foregroundColor(.safeEatTextSecondary)
-
-                                if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
-                                    Text("⚠️ 위치 권한이 거부되었습니다\n\n설정 > 개인정보 보호 > 위치 서비스에서\nSafeEat 권한을 허용해주세요")
-                                        .font(.system(size: 13))
-                                        .foregroundColor(.red)
-                                        .multilineTextAlignment(.center)
-                                        .padding(.top, 8)
-                                }
                             } else {
-                                Image(systemName: viewModel.hasSearched ? "magnifyingglass" : "location.circle")
+                                Image(systemName: "magnifyingglass")
                                     .font(.system(size: 36))
                                     .foregroundColor(.safeEatTextSecondary)
-                                Text(viewModel.hasSearched ? "검색 결과가 없습니다" : "주변 검색 버튼을 눌러\n가까운 식당을 찾아보세요")
+                                Text("검색 결과가 없습니다")
                                     .font(.system(size: 14))
                                     .foregroundColor(.safeEatTextSecondary)
                                     .multilineTextAlignment(.center)
@@ -196,6 +188,14 @@ struct RestaurantSearchView: View {
         .navigationBarHidden(true)
         .onAppear {
             locationManager.requestLocation()
+            // 2초 후에도 위치가 없으면 기본 위치로 검색
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                if locationManager.currentLocation == nil && viewModel.restaurants.isEmpty && !viewModel.hasSearched {
+                    Task {
+                        await viewModel.searchNearbyRestaurants(location: RestaurantSearchViewModel.defaultLocation)
+                    }
+                }
+            }
         }
         .onChange(of: locationManager.currentLocation) { newLocation in
             // 위치를 처음 받았을 때만 자동으로 주변 검색
@@ -327,6 +327,9 @@ class RestaurantSearchViewModel: ObservableObject {
 
     private let kakaoService = KakaoLocalService.shared
 
+    // 기본 위치 (안양시청)
+    static let defaultLocation = CLLocationCoordinate2D(latitude: 37.3943, longitude: 126.9568)
+
     func searchRestaurants(keyword: String, location: CLLocationCoordinate2D?) async {
         guard !keyword.isEmpty else { return }
 
@@ -362,20 +365,17 @@ class RestaurantSearchViewModel: ObservableObject {
     }
 
     func searchNearbyRestaurants(location: CLLocationCoordinate2D?) async {
-        guard let location = location else {
-            errorMessage = "위치 정보를 가져올 수 없습니다"
-            return
-        }
+        let searchLocation = location ?? RestaurantSearchViewModel.defaultLocation
 
         isLoading = true
         errorMessage = nil
         hasSearched = true
-        mapCenter = location
+        mapCenter = searchLocation
 
         do {
             let response = try await kakaoService.searchByCategory(
                 categoryCode: "FD6",
-                location: location,
+                location: searchLocation,
                 radius: 2000,
                 size: 15
             )
