@@ -186,14 +186,16 @@ struct RestaurantSearchView: View {
             }
         }
         .navigationBarHidden(true)
-        .task {
-            // 앱 시작 시 바로 주변 검색 (위치 있으면 위치 기반, 없으면 기본 위치)
+        .onAppear {
+            print("🏠 홈화면 로드됨")
+            // 앱 시작 시 바로 검색
             if viewModel.restaurants.isEmpty && !viewModel.hasSearched {
-                locationManager.requestLocation()
-                // 잠시 대기 후 검색 (위치 받을 시간)
-                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
-                let location = locationManager.currentLocation ?? RestaurantSearchViewModel.defaultLocation
-                await viewModel.searchNearbyRestaurants(location: location)
+                print("🔍 검색 시작...")
+                Task {
+                    let location = RestaurantSearchViewModel.defaultLocation
+                    print("📍 기본 위치 사용: \(location.latitude), \(location.longitude)")
+                    await viewModel.searchNearbyRestaurants(location: location)
+                }
             }
         }
     }
@@ -358,12 +360,14 @@ class RestaurantSearchViewModel: ObservableObject {
     func searchNearbyRestaurants(location: CLLocationCoordinate2D?) async {
         let searchLocation = location ?? RestaurantSearchViewModel.defaultLocation
 
+        print("🚀 searchNearbyRestaurants 시작")
         isLoading = true
         errorMessage = nil
         hasSearched = true
         mapCenter = searchLocation
 
         do {
+            print("📡 Kakao API 호출 중...")
             let response = try await kakaoService.searchByCategory(
                 categoryCode: "FD6",
                 location: searchLocation,
@@ -371,11 +375,13 @@ class RestaurantSearchViewModel: ObservableObject {
                 size: 15
             )
 
+            print("✅ 검색 성공: \(response.documents.count)개 식당")
             restaurants = response.documents.map { $0.toRestaurant() }
 
             isLoading = false
         } catch {
-            errorMessage = "주변 검색 중 오류가 발생했습니다: \(error.localizedDescription)"
+            print("❌ 검색 실패: \(error.localizedDescription)")
+            errorMessage = "검색 오류: \(error.localizedDescription)"
             isLoading = false
         }
     }
