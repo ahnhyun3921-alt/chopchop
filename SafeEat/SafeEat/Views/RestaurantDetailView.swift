@@ -67,8 +67,13 @@ struct RestaurantDetailView: View {
         }
         .background(Color.white)
         .navigationBarHidden(true)
+        .onAppear {
+            print("🍽️ RestaurantDetailView 열림: \(viewModel.restaurant.name)")
+        }
         .task {
+            print("🔥 Firebase 메뉴 로딩 시작...")
             await viewModel.loadMenusFromFirebase()
+            print("🔥 Firebase 메뉴 로딩 완료")
         }
     }
 }
