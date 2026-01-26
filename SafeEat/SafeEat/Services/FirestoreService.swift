@@ -98,55 +98,84 @@ class FirestoreService {
 
     /// 식당의 모든 메뉴 가져오기
     func getMenus(restaurantId: String) async throws -> [Menu] {
+        print("📋 메뉴 로드: restaurantId = \(restaurantId)")
+
         let snapshot = try await db.collection("restaurants")
             .document(restaurantId)
             .collection("menus")
             .getDocuments()
 
-        return snapshot.documents.compactMap { doc -> Menu? in
-            guard var menu = try? doc.data(as: Menu.self) else { return nil }
-            // 문서 ID를 메뉴 ID로 설정
-            if menu.restaurantId.isEmpty {
-                menu.restaurantId = restaurantId
+        print("   문서 수: \(snapshot.documents.count)")
+
+        var menus: [Menu] = []
+        for doc in snapshot.documents {
+            let data = doc.data()
+            print("   메뉴 데이터: \(data)")
+
+            // 수동 파싱 (Codable 실패 대비)
+            if let name = data["name"] as? String {
+                let price = data["price"] as? Int ?? 0
+                let menu = Menu(
+                    id: doc.documentID,
+                    restaurantId: restaurantId,
+                    name: name,
+                    price: price,
+                    description: data["description"] as? String,
+                    ingredients: data["ingredients"] as? [String] ?? [],
+                    imageUrl: data["imageUrl"] as? String,
+                    probabilityTags: data["probabilityTags"] as? [String] ?? []
+                )
+                menus.append(menu)
             }
-            return menu
         }
+
+        print("   파싱된 메뉴: \(menus.count)개")
+        return menus
     }
 
     /// 식당 이름으로 메뉴 검색 (카카오 검색 결과와 매칭용)
     func getMenusByRestaurantName(name: String) async throws -> [Menu] {
-        // 식당 이름으로 검색
-        let snapshot = try await db.collection("restaurants")
-            .whereField("name", isEqualTo: name)
-            .limit(to: 1)
-            .getDocuments()
+        print("🔍 Firebase 검색: \(name)")
 
-        guard let restaurantDoc = snapshot.documents.first else {
-            // 정확한 이름 매칭 실패시 부분 일치 검색 시도
-            return try await searchMenusByPartialName(name: name)
-        }
+        // 모든 식당 가져와서 이름 매칭 (쿼리 인덱스 문제 회피)
+        let snapshot = try await db.collection("restaurants").getDocuments()
+        print("   총 식당 수: \(snapshot.documents.count)")
 
-        let restaurantId = restaurantDoc.documentID
-        return try await getMenus(restaurantId: restaurantId)
-    }
-
-    /// 부분 이름 매칭으로 메뉴 검색
-    private func searchMenusByPartialName(name: String) async throws -> [Menu] {
-        // 이름에서 지점명 제거하고 검색 (예: "배스킨라빈스 안양평촌홈플러스점" -> "배스킨라빈스")
-        let baseName = name.components(separatedBy: " ").first ?? name
-
-        let snapshot = try await db.collection("restaurants")
-            .getDocuments()
-
-        // 이름이 포함된 식당 찾기
+        // 정확한 이름 매칭
         for doc in snapshot.documents {
-            if let docName = doc.data()["name"] as? String,
-               docName.contains(baseName) || baseName.contains(docName.components(separatedBy: " ").first ?? "") {
-                let restaurantId = doc.documentID
-                return try await getMenus(restaurantId: restaurantId)
+            if let docName = doc.data()["name"] as? String {
+                if docName == name {
+                    print("   ✅ 정확 매칭: \(docName)")
+                    let restaurantId = doc.documentID
+                    return try await getMenus(restaurantId: restaurantId)
+                }
             }
         }
 
+        // 부분 매칭 (이름 포함)
+        for doc in snapshot.documents {
+            if let docName = doc.data()["name"] as? String {
+                if docName.contains(name) || name.contains(docName) {
+                    print("   ✅ 부분 매칭: \(docName)")
+                    let restaurantId = doc.documentID
+                    return try await getMenus(restaurantId: restaurantId)
+                }
+            }
+        }
+
+        // 첫 단어로 매칭 (예: "배스킨라빈스")
+        let baseName = name.components(separatedBy: " ").first ?? name
+        for doc in snapshot.documents {
+            if let docName = doc.data()["name"] as? String {
+                if docName.hasPrefix(baseName) {
+                    print("   ✅ 접두사 매칭: \(docName)")
+                    let restaurantId = doc.documentID
+                    return try await getMenus(restaurantId: restaurantId)
+                }
+            }
+        }
+
+        print("   ❌ 매칭 실패")
         return []
     }
 
