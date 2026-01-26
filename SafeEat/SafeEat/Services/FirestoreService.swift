@@ -102,7 +102,15 @@ class FirestoreService {
             .document(restaurantId)
             .collection("menus")
             .getDocuments()
-        return snapshot.documents.compactMap { try? $0.data(as: Menu.self) }
+
+        return snapshot.documents.compactMap { doc -> Menu? in
+            guard var menu = try? doc.data(as: Menu.self) else { return nil }
+            // 문서 ID를 메뉴 ID로 설정
+            if menu.restaurantId.isEmpty {
+                menu.restaurantId = restaurantId
+            }
+            return menu
+        }
     }
 
     /// 식당 이름으로 메뉴 검색 (카카오 검색 결과와 매칭용)

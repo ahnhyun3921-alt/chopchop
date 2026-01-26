@@ -86,15 +86,36 @@ struct DayOperatingHours: Identifiable, Codable {
 
 struct Menu: Identifiable, Codable {
     let id: String
-    let restaurantId: String  // 어느 식당의 메뉴인지
+    var restaurantId: String  // 어느 식당의 메뉴인지
     let name: String
     let price: Int
     let description: String?
-    let ingredients: [String]  // OCR로 추출한 재료들
+    var ingredients: [String]  // OCR로 추출한 재료들
     let imageUrl: String?
-    let probabilityTags: [String]  // 추가: 확률 태그들
+    var probabilityTags: [String]  // 추가: 확률 태그들
     let contributorId: String?  // 누가 등록했는지
     let createdAt: Date?  // 언제 등록했는지
+
+    // Codable - Firebase 데이터와 호환되도록
+    enum CodingKeys: String, CodingKey {
+        case id, restaurantId, name, price, description, ingredients, imageUrl, probabilityTags, contributorId, createdAt
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        // id는 문서 ID 또는 저장된 값 사용
+        self.id = try container.decodeIfPresent(String.self, forKey: .id) ?? UUID().uuidString
+        self.restaurantId = try container.decodeIfPresent(String.self, forKey: .restaurantId) ?? ""
+        self.name = try container.decode(String.self, forKey: .name)
+        self.price = try container.decodeIfPresent(Int.self, forKey: .price) ?? 0
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.ingredients = try container.decodeIfPresent([String].self, forKey: .ingredients) ?? []
+        self.imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
+        self.probabilityTags = try container.decodeIfPresent([String].self, forKey: .probabilityTags) ?? []
+        self.contributorId = try container.decodeIfPresent(String.self, forKey: .contributorId)
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+    }
 
     // OCR로 메뉴 생성할 때 사용하는 생성자
     init(id: String = UUID().uuidString,
@@ -102,7 +123,7 @@ struct Menu: Identifiable, Codable {
          name: String,
          price: Int,
          description: String? = nil,
-         ingredients: [String],
+         ingredients: [String] = [],
          imageUrl: String? = nil,
          probabilityTags: [String] = [],
          contributorId: String? = nil,
