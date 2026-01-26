@@ -186,23 +186,14 @@ struct RestaurantSearchView: View {
             }
         }
         .navigationBarHidden(true)
-        .onAppear {
-            locationManager.requestLocation()
-            // 2초 후에도 위치가 없으면 기본 위치로 검색
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                if locationManager.currentLocation == nil && viewModel.restaurants.isEmpty && !viewModel.hasSearched {
-                    Task {
-                        await viewModel.searchNearbyRestaurants(location: RestaurantSearchViewModel.defaultLocation)
-                    }
-                }
-            }
-        }
-        .onChange(of: locationManager.currentLocation) { newLocation in
-            // 위치를 처음 받았을 때만 자동으로 주변 검색
-            if newLocation != nil && viewModel.restaurants.isEmpty && !viewModel.hasSearched {
-                Task {
-                    await viewModel.searchNearbyRestaurants(location: newLocation)
-                }
+        .task {
+            // 앱 시작 시 바로 주변 검색 (위치 있으면 위치 기반, 없으면 기본 위치)
+            if viewModel.restaurants.isEmpty && !viewModel.hasSearched {
+                locationManager.requestLocation()
+                // 잠시 대기 후 검색 (위치 받을 시간)
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5초
+                let location = locationManager.currentLocation ?? RestaurantSearchViewModel.defaultLocation
+                await viewModel.searchNearbyRestaurants(location: location)
             }
         }
     }
