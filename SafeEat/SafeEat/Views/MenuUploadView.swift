@@ -468,7 +468,6 @@ class MenuUploadViewModel: ObservableObject {
 
             // 각 메뉴를 Firestore에 저장
             for menu in extractedMenus {
-                var menuWithContributor = menu
                 // contributorId 업데이트는 생성자가 있으니 새로 생성
                 let updatedMenu = Menu(
                     id: menu.id,

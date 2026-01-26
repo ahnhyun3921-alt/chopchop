@@ -116,7 +116,7 @@ struct KakaoMapView: UIViewRepresentable {
 
         // 커스텀 핀 뷰
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            guard let restaurantAnnotation = annotation as? RestaurantAnnotation else {
+            guard annotation is RestaurantAnnotation else {
                 return nil
             }
 
