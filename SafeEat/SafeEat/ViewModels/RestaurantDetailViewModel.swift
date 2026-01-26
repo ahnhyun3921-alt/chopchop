@@ -12,6 +12,8 @@ class RestaurantDetailViewModel: ObservableObject {
     @Published var restaurant: Restaurant
     @Published var selectedPersons: [Person]
     @Published var safeMenuInfos: [SafeMenuInfo]
+    @Published var allMenus: [Menu] = []
+    @Published var isLoading: Bool = false
     @Published var isOperatingHoursExpanded = false
     @Published var expandedPersonIds: Set<String> = []
     @Published var selectedMenuTab: MenuTab = .safe
@@ -24,8 +26,45 @@ class RestaurantDetailViewModel: ObservableObject {
     init(restaurant: Restaurant = .sample, selectedPersons: [Person] = Person.sample) {
         self.restaurant = restaurant
         self.selectedPersons = selectedPersons
-        self.safeMenuInfos = Self.calculateSafeMenus(for: selectedPersons, restaurant: restaurant)
+        self.safeMenuInfos = []
         self.isFavorite = Self.loadFavoriteStatus(restaurantId: restaurant.id)
+    }
+
+    // Firebase에서 메뉴 불러오기
+    func loadMenusFromFirebase() async {
+        await MainActor.run { isLoading = true }
+
+        do {
+            let menus = try await FirestoreService.shared.getMenus(restaurantId: restaurant.id)
+
+            await MainActor.run {
+                self.allMenus = menus
+                self.safeMenuInfos = self.calculateSafeMenusFromFirebase(for: selectedPersons, menus: menus)
+                self.isLoading = false
+            }
+        } catch {
+            print("메뉴 로드 실패: \(error.localizedDescription)")
+            await MainActor.run {
+                // 실패 시 샘플 데이터 사용
+                self.safeMenuInfos = Self.calculateSafeMenus(for: selectedPersons, restaurant: restaurant)
+                self.isLoading = false
+            }
+        }
+    }
+
+    // Firebase 메뉴로 안전한 메뉴 계산
+    private func calculateSafeMenusFromFirebase(for persons: [Person], menus: [Menu]) -> [SafeMenuInfo] {
+        return persons.map { person in
+            // 제한 성분이 없는 메뉴만 필터링 (간단한 로직)
+            let safeMenus = menus.filter { menu in
+                !menu.containsAny(restrictedIngredients: person.restrictedIngredients)
+            }
+            return SafeMenuInfo(
+                person: person,
+                safeMenuCount: safeMenus.count,
+                safeMenus: safeMenus
+            )
+        }
     }
 
     // 하트 토글

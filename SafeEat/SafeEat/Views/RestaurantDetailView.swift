@@ -67,6 +67,9 @@ struct RestaurantDetailView: View {
         }
         .background(Color.white)
         .navigationBarHidden(true)
+        .task {
+            await viewModel.loadMenusFromFirebase()
+        }
     }
 }
 
