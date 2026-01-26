@@ -9,9 +9,11 @@ import Foundation
 import CoreLocation
 import Combine
 
-// CLLocationCoordinate2D 비교 헬퍼 함수
-func coordinatesEqual(_ lhs: CLLocationCoordinate2D, _ rhs: CLLocationCoordinate2D) -> Bool {
-    return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+// CLLocationCoordinate2D를 Equatable로 확장
+extension CLLocationCoordinate2D: @retroactive Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
 }
 
 class LocationManager: NSObject, ObservableObject {
