@@ -48,32 +48,79 @@ class RestaurantDetailViewModel: ObservableObject {
 
             await MainActor.run {
                 self.allMenus = finalMenus
-                self.safeMenuInfos = self.calculateSafeMenusFromFirebase(for: selectedPersons, menus: finalMenus)
                 self.isLoading = false
                 print("메뉴 로드 성공: \(finalMenus.count)개")
             }
+
+            // AI로 안전한 메뉴 계산 (백그라운드)
+            await calculateSafeMenusWithAI(menus: finalMenus)
+
         } catch {
             print("메뉴 로드 실패: \(error.localizedDescription)")
             await MainActor.run {
-                // 실패 시 빈 데이터
-                self.safeMenuInfos = self.calculateSafeMenusFromFirebase(for: selectedPersons, menus: [])
+                self.safeMenuInfos = []
                 self.isLoading = false
             }
         }
     }
 
-    // Firebase 메뉴로 안전한 메뉴 계산
-    private func calculateSafeMenusFromFirebase(for persons: [Person], menus: [Menu]) -> [SafeMenuInfo] {
-        return persons.map { person in
-            // 제한 성분이 없는 메뉴만 필터링 (간단한 로직)
-            let safeMenus = menus.filter { menu in
-                !menu.containsAny(restrictedIngredients: person.restrictedIngredients)
+    // AI로 메뉴별 알레르기 확률 계산
+    private func calculateSafeMenusWithAI(menus: [Menu]) async {
+        var safeMenuInfosResult: [SafeMenuInfo] = []
+
+        for person in selectedPersons {
+            guard !person.restrictedIngredients.isEmpty else {
+                // 제한 성분이 없으면 모든 메뉴가 안전
+                safeMenuInfosResult.append(SafeMenuInfo(
+                    person: person,
+                    safeMenuCount: menus.count,
+                    safeMenus: menus
+                ))
+                continue
             }
-            return SafeMenuInfo(
+
+            var safeMenus: [Menu] = []
+
+            for menu in menus {
+                do {
+                    // Claude AI로 확률 계산
+                    let result = try await ClaudeAPIService.shared.calculateAllergyProbability(
+                        menuName: menu.name,
+                        restrictedIngredients: person.restrictedIngredients
+                    )
+
+                    // 안전한 메뉴인 경우 (overall_safe가 true)
+                    if result.overallSafe {
+                        let updatedMenu = Menu(
+                            id: menu.id,
+                            restaurantId: menu.restaurantId,
+                            name: menu.name,
+                            price: menu.price,
+                            description: menu.description,
+                            ingredients: menu.ingredients,
+                            imageUrl: menu.imageUrl,
+                            probabilityTags: result.tags
+                        )
+                        safeMenus.append(updatedMenu)
+                    }
+                } catch {
+                    print("AI 분석 실패 (\(menu.name)): \(error.localizedDescription)")
+                    // AI 실패 시 기본 필터링 사용
+                    if !menu.containsAny(restrictedIngredients: person.restrictedIngredients) {
+                        safeMenus.append(menu)
+                    }
+                }
+            }
+
+            safeMenuInfosResult.append(SafeMenuInfo(
                 person: person,
                 safeMenuCount: safeMenus.count,
                 safeMenus: safeMenus
-            )
+            ))
+        }
+
+        await MainActor.run {
+            self.safeMenuInfos = safeMenuInfosResult
         }
     }
 
