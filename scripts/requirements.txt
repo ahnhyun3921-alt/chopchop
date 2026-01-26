@@ -1,4 +1,4 @@
-# SafeEat 메뉴 수집 스크립트 의존성
+# SafeEat 메뉴 수집 및 리뷰 크롤링 스크립트 의존성
 
 # 이미지 처리
 Pillow>=10.0.0
@@ -18,3 +18,7 @@ firebase-admin>=6.2.0
 
 # HTTP 요청
 requests>=2.31.0
+
+# 앱 리뷰 크롤링
+google-play-scraper>=1.2.4
+app-store-scraper>=0.3.5
