@@ -13,7 +13,7 @@ class ClaudeAPIService {
     // Claude API Key (Config.swift에서 가져옴)
     private let apiKey = Config.claudeAPIKey
     private let apiURL = "https://api.anthropic.com/v1/messages"
-    private let model = "claude-3-5-haiku-20241022"
+    private let model = "claude-3-haiku-20240307"
     private let apiVersion = "2023-06-01"
 
     private init() {}
