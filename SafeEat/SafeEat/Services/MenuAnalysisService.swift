@@ -55,6 +55,7 @@ class MenuAnalysisService {
             if let analysis = analysisResults[menuName] {
                 menuObjects.append(Menu(
                     id: "\(restaurant.id)_menu_\(index)",
+                    restaurantId: restaurant.id,
                     name: menuName,
                     price: Int.random(in: 8000...35000), // TODO: 실제 가격 정보
                     description: nil,
@@ -87,9 +88,9 @@ class MenuAnalysisService {
             // 안전한 메뉴인 경우 (overall_safe가 true)
             if probabilityResult.overallSafe {
                 // 확률 태그 추가
-                var updatedMenu = menu
-                updatedMenu = Menu(
+                let updatedMenu = Menu(
                     id: menu.id,
+                    restaurantId: menu.restaurantId,
                     name: menu.name,
                     price: menu.price,
                     description: menu.description,

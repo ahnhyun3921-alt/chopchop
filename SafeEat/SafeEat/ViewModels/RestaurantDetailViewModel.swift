@@ -106,6 +106,7 @@ class RestaurantDetailViewModel: ObservableObject {
             return [
                 Menu(
                     id: "1",
+                    restaurantId: "1",
                     name: "아보카도 셔핑 브레드",
                     price: 12500,
                     description: nil,
@@ -115,6 +116,7 @@ class RestaurantDetailViewModel: ObservableObject {
                 ),
                 Menu(
                     id: "2",
+                    restaurantId: "1",
                     name: "그라브락스 연어 샐러드",
                     price: 25500,
                     description: nil,
@@ -127,6 +129,7 @@ class RestaurantDetailViewModel: ObservableObject {
             return [
                 Menu(
                     id: "3",
+                    restaurantId: "1",
                     name: "아보카도 셔핑 브레드",
                     price: 12500,
                     description: nil,
@@ -136,6 +139,7 @@ class RestaurantDetailViewModel: ObservableObject {
                 ),
                 Menu(
                     id: "4",
+                    restaurantId: "1",
                     name: "그라브락스 연어 샐러드",
                     price: 25500,
                     description: nil,
@@ -145,6 +149,7 @@ class RestaurantDetailViewModel: ObservableObject {
                 ),
                 Menu(
                     id: "5",
+                    restaurantId: "1",
                     name: "토마토 파스타",
                     price: 15000,
                     description: nil,

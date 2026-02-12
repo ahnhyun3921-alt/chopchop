@@ -6,16 +6,10 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 @main
 struct SafeEatApp: App {
     @StateObject private var authService = AuthenticationService()
-
-    init() {
-        // Firebase 초기화
-        FirebaseApp.configure()
-    }
 
     var body: some Scene {
         WindowGroup {
